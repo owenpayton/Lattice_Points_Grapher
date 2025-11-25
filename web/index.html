@@ -31,25 +31,6 @@
       padding: 16px;
     }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 600;
-    }
-
-    .status {
-      font-size: 14px;
-      color: var(--muted);
-      margin: 4px 0 0;
-    }
-
     .layout {
       display: grid;
       grid-template-columns: minmax(520px, 2fr) minmax(240px, 1fr);
@@ -131,10 +112,6 @@
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <p class="status" id="statusText">Loading Python runtime...</p>
-    </div>
-
     <div class="layout">
       <section class="card">
         <canvas id="gridCanvas" aria-label="Lattice triangle canvas"></canvas>
@@ -173,7 +150,6 @@
     const boundaryEl = document.getElementById("boundaryValue");
     const interiorEl = document.getElementById("interiorValue");
     const vertexEls = [document.getElementById("vertexA"), document.getElementById("vertexB"), document.getElementById("vertexC")];
-    const statusText = document.getElementById("statusText");
 
     const latticeRange = 10;
     const scale = 32;
@@ -477,7 +453,6 @@ def compute_snapshot(vertices: Sequence[Point]):
         drawScene();
       } catch (error) {
         console.error(error);
-        statusText.textContent = "Python runtime error. See console.";
       } finally {
         if (pyVertices) {
           pyVertices.destroy();
@@ -543,18 +518,15 @@ def compute_snapshot(vertices: Sequence[Point]):
     window.addEventListener("resize", () => drawScene());
 
     async function bootPython() {
-      statusText.textContent = "Loading Python runtime...";
       try {
         pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/" });
         await pyodide.runPythonAsync(PY_CODE);
         computeSnapshot = pyodide.globals.get("compute_snapshot");
         pythonReady = true;
-        statusText.textContent = "Ready. Drag handles to move the triangle.";
         updateSidebar();
         runPythonUpdate();
       } catch (error) {
         console.error(error);
-        statusText.textContent = "Could not load Pyodide. Check your connection.";
       }
     }
 
