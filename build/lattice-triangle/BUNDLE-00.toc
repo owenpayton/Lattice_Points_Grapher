@@ -1,0 +1,3 @@
+([('lattice-triangle',
+   '/Users/owenpayton/Desktop/Boundary Points/dist/lattice-triangle',
+   'EXECUTABLE')],)

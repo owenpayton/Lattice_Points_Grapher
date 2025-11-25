@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lattice Triangle</title>
+  <style>
+    :root {
+      --bg: #eef2f7;
+      --panel: #ffffff;
+      --border: #cfd8e3;
+      --text: #111111;
+      --muted: #4b5563;
+      --accent: #1b9aaa;
+      --accent-2: #f48c06;
+      --accent-3: #2a9d8f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .status {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 4px 0 0;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(520px, 2fr) minmax(240px, 1fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 620px;
+      display: block;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #ffffff;
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stat {
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f7fafc;
+    }
+
+    .stat small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .stat strong {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .vertices {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .vertex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f7fafc;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    @media (max-width: 960px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      canvas {
+        height: 520px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <p class="status" id="statusText">Loading Python runtime...</p>
+    </div>
+
+    <div class="layout">
+      <section class="card">
+        <canvas id="gridCanvas" aria-label="Lattice triangle canvas"></canvas>
+      </section>
+
+      <aside class="card">
+        <div class="stats">
+          <div class="stat">
+            <small>Area</small>
+            <strong id="areaValue">0</strong>
+          </div>
+          <div class="stat">
+            <small>Boundary points</small>
+            <strong id="boundaryValue">0</strong>
+          </div>
+          <div class="stat">
+            <small>Interior points</small>
+            <strong id="interiorValue">0</strong>
+          </div>
+        </div>
+
+        <div class="vertices">
+          <div class="vertex"><span>A</span><span id="vertexA">(0, 0)</span></div>
+          <div class="vertex"><span>B</span><span id="vertexB">(0, 0)</span></div>
+          <div class="vertex"><span>C</span><span id="vertexC">(0, 0)</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <script>
+    const canvas = document.getElementById("gridCanvas");
+    const ctx = canvas.getContext("2d");
+    const areaEl = document.getElementById("areaValue");
+    const boundaryEl = document.getElementById("boundaryValue");
+    const interiorEl = document.getElementById("interiorValue");
+    const vertexEls = [document.getElementById("vertexA"), document.getElementById("vertexB"), document.getElementById("vertexC")];
+    const statusText = document.getElementById("statusText");
+
+    const latticeRange = 10;
+    const scale = 32;
+    let originX = 0;
+    let originY = 0;
+    let activeHandle = null;
+    let pyodide;
+    let computeSnapshot;
+    let pythonReady = false;
+    let pythonBusy = false;
+    let queuedUpdate = false;
+
+    let vertices = [
+      { x: -3, y: -2 },
+      { x: 3, y: -2 },
+      { x: 0, y: 4 },
+    ];
+
+    let snapshot = {
+      area: 0,
+      boundary: 0,
+      interior: 0,
+      boundary_points: [],
+      interior_points: [],
+    };
+
+    const PY_CODE = `
+from math import gcd
+from typing import Sequence, Tuple
+
+Point = Tuple[int, int]
+
+def _validate_points(points: Sequence[Point]) -> list[Point]:
+    pts = [tuple(int(v) for v in p) for p in points]
+    if len(pts) < 3:
+        raise ValueError("At least three points are required to describe a polygon.")
+    return pts
+
+def _edge_sign(point: Point, start: Point, end: Point) -> int:
+    return (point[0] - end[0]) * (start[1] - end[1]) - (start[0] - end[0]) * (point[1] - end[1])
+
+def _triangle_contains(point: Point, vertices: Sequence[Point]) -> bool:
+    a, b, c = vertices
+    d1 = _edge_sign(point, a, b)
+    d2 = _edge_sign(point, b, c)
+    d3 = _edge_sign(point, c, a)
+    has_neg = d1 < 0 or d2 < 0 or d3 < 0
+    has_pos = d1 > 0 or d2 > 0 or d3 > 0
+    on_boundary = d1 == 0 or d2 == 0 or d3 == 0
+    return not on_boundary and not (has_neg and has_pos)
+
+def is_point_on_edge(point: Point, start: Point, end: Point) -> bool:
+    cross = (point[0] - start[0]) * (end[1] - start[1]) - (point[1] - start[1]) * (end[0] - start[0])
+    if cross != 0:
+        return False
+    min_x, max_x = sorted((start[0], end[0]))
+    min_y, max_y = sorted((start[1], end[1]))
+    return min_x <= point[0] <= max_x and min_y <= point[1] <= max_y
+
+def get_polygon_area(points: Sequence[Point]) -> float:
+    pts = _validate_points(points)
+    area2 = 0
+    for i in range(len(pts)):
+        x1, y1 = pts[i]
+        x2, y2 = pts[(i + 1) % len(pts)]
+        area2 += x1 * y2 - x2 * y1
+    return abs(area2) / 2.0
+
+def get_boundary_points(points: Sequence[Point]) -> int:
+    pts = _validate_points(points)
+    boundary = 0
+    for i in range(len(pts)):
+        x1, y1 = pts[i]
+        x2, y2 = pts[(i + 1) % len(pts)]
+        boundary += gcd(abs(x2 - x1), abs(y2 - y1))
+    return boundary
+
+def get_interior_points(points: Sequence[Point]) -> int:
+    pts = _validate_points(points)
+    if len(pts) != 3:
+        raise ValueError("Interior enumeration is implemented for triangles only.")
+    min_x = min(p[0] for p in pts)
+    max_x = max(p[0] for p in pts)
+    min_y = min(p[1] for p in pts)
+    max_y = max(p[1] for p in pts)
+
+    interior = 0
+    for x in range(min_x, max_x + 1):
+        for y in range(min_y, max_y + 1):
+            candidate = (x, y)
+            if candidate in pts:
+                continue
+            if any(is_point_on_edge(candidate, pts[i], pts[(i + 1) % 3]) for i in range(3)):
+                continue
+            if _triangle_contains(candidate, pts):
+                interior += 1
+    return interior
+
+def collect_boundary_points(vertices: Sequence[Point]) -> list[Point]:
+    boundary = set()
+    for i in range(3):
+        start = vertices[i]
+        end = vertices[(i + 1) % 3]
+        dx, dy = end[0] - start[0], end[1] - start[1]
+        steps = gcd(abs(dx), abs(dy))
+        if steps == 0:
+            boundary.add(start)
+            continue
+        step_x, step_y = dx // steps, dy // steps
+        for j in range(steps + 1):
+            boundary.add((start[0] + step_x * j, start[1] + step_y * j))
+    return sorted(boundary)
+
+def collect_interior_points(vertices: Sequence[Point]) -> list[Point]:
+    pts = _validate_points(vertices)
+    min_x = min(p[0] for p in pts)
+    max_x = max(p[0] for p in pts)
+    min_y = min(p[1] for p in pts)
+    max_y = max(p[1] for p in pts)
+
+    interior = []
+    for x in range(min_x, max_x + 1):
+        for y in range(min_y, max_y + 1):
+            candidate = (x, y)
+            if candidate in pts:
+                continue
+            if any(is_point_on_edge(candidate, pts[i], pts[(i + 1) % 3]) for i in range(3)):
+                continue
+            if _triangle_contains(candidate, pts):
+                interior.append(candidate)
+    return interior
+
+def compute_snapshot(vertices: Sequence[Point]):
+    pts = [tuple(int(v) for v in pair) for pair in vertices]
+    return {
+        "area": get_polygon_area(pts),
+        "boundary": get_boundary_points(pts),
+        "interior": get_interior_points(pts),
+        "boundary_points": collect_boundary_points(pts),
+        "interior_points": collect_interior_points(pts),
+    }
+`;
+
+    function clampVertex(vertex) {
+      return {
+        x: Math.max(-latticeRange, Math.min(latticeRange, vertex.x)),
+        y: Math.max(-latticeRange, Math.min(latticeRange, vertex.y)),
+      };
+    }
+
+    function latticeToCanvas(point) {
+      return {
+        x: originX + point.x * scale,
+        y: originY - point.y * scale,
+      };
+    }
+
+    function canvasToLattice(point) {
+      return clampVertex({
+        x: Math.round((point.x - originX) / scale),
+        y: Math.round((originY - point.y) / scale),
+      });
+    }
+
+    function drawGrid(rect) {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, rect.width, rect.height);
+
+      ctx.save();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "#e5e7eb";
+      for (let i = -latticeRange; i <= latticeRange; i++) {
+        const x = originX + i * scale;
+        const y = originY - i * scale;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, rect.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(rect.width, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      ctx.save();
+      ctx.strokeStyle = "#111827";
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(0, originY);
+      ctx.lineTo(rect.width, originY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(originX, 0);
+      ctx.lineTo(originX, rect.height);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      ctx.fillStyle = "#9ca3af";
+      for (let x = -latticeRange; x <= latticeRange; x++) {
+        for (let y = -latticeRange; y <= latticeRange; y++) {
+          const p = latticeToCanvas({ x, y });
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      ctx.restore();
+    }
+
+    function drawTriangle() {
+      const pts = vertices.map(latticeToCanvas);
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      ctx.lineTo(pts[1].x, pts[1].y);
+      ctx.lineTo(pts[2].x, pts[2].y);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(27, 154, 170, 0.16)";
+      ctx.strokeStyle = "#1b9aaa";
+      ctx.lineWidth = 2.2;
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawPoints(points, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      for (const point of points || []) {
+        const p = latticeToCanvas({ x: point[0], y: point[1] });
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4.0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
+    function drawHandles() {
+      ctx.save();
+      for (const vertex of vertices) {
+        const p = latticeToCanvas(vertex);
+        ctx.beginPath();
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#1b9aaa";
+        ctx.lineWidth = 2.4;
+        ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    function drawScene() {
+      if (!ctx) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      originX = rect.width / 2;
+      originY = rect.height / 2;
+
+      drawGrid(rect);
+      drawPoints(snapshot.boundary_points, "#f48c06");
+      drawPoints(snapshot.interior_points, "#2a9d8f");
+      drawTriangle();
+      drawHandles();
+    }
+
+    function updateSidebar() {
+      const formatArea = (value) => {
+        if (Number.isInteger(value)) return value.toString();
+        return value.toFixed(2);
+      };
+
+      areaEl.textContent = formatArea(snapshot.area ?? 0);
+      boundaryEl.textContent = snapshot.boundary ?? 0;
+      interiorEl.textContent = snapshot.interior ?? 0;
+
+      vertices.forEach((vertex, idx) => {
+        vertexEls[idx].textContent = `(${vertex.x}, ${vertex.y})`;
+      });
+    }
+
+    async function runPythonUpdate() {
+      if (!pythonReady) return;
+      if (pythonBusy) {
+        queuedUpdate = true;
+        return;
+      }
+      pythonBusy = true;
+      let pyVertices;
+      try {
+        pyVertices = pyodide.toPy(vertices.map((v) => [v.x, v.y]));
+        const result = computeSnapshot(pyVertices).toJs({ dict_converter: Object.fromEntries });
+        snapshot = result;
+        updateSidebar();
+        drawScene();
+      } catch (error) {
+        console.error(error);
+        statusText.textContent = "Python runtime error. See console.";
+      } finally {
+        if (pyVertices) {
+          pyVertices.destroy();
+        }
+        pythonBusy = false;
+        if (queuedUpdate) {
+          queuedUpdate = false;
+          runPythonUpdate();
+        }
+      }
+    }
+
+    function onVertexChange() {
+      drawScene();
+      runPythonUpdate();
+    }
+
+    function findHandle(position) {
+      const radius = 14;
+      for (let i = 0; i < vertices.length; i++) {
+        const center = latticeToCanvas(vertices[i]);
+        const dist2 = (center.x - position.x) ** 2 + (center.y - position.y) ** 2;
+        if (dist2 <= radius ** 2) return i;
+      }
+      return null;
+    }
+
+    function pointerPosition(evt) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top,
+      };
+    }
+
+    canvas.addEventListener("pointerdown", (evt) => {
+      const pos = pointerPosition(evt);
+      const hit = findHandle(pos);
+      if (hit !== null) {
+        activeHandle = hit;
+        canvas.setPointerCapture(evt.pointerId);
+      }
+    });
+
+    canvas.addEventListener("pointermove", (evt) => {
+      if (activeHandle === null) return;
+      const pos = pointerPosition(evt);
+      vertices[activeHandle] = canvasToLattice(pos);
+      onVertexChange();
+    });
+
+    function releasePointer(evt) {
+      if (activeHandle !== null) {
+        if (canvas.hasPointerCapture(evt.pointerId)) {
+          canvas.releasePointerCapture(evt.pointerId);
+        }
+      }
+      activeHandle = null;
+    }
+
+    canvas.addEventListener("pointerup", releasePointer);
+    canvas.addEventListener("pointercancel", releasePointer);
+    window.addEventListener("resize", () => drawScene());
+
+    async function bootPython() {
+      statusText.textContent = "Loading Python runtime...";
+      try {
+        pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/" });
+        await pyodide.runPythonAsync(PY_CODE);
+        computeSnapshot = pyodide.globals.get("compute_snapshot");
+        pythonReady = true;
+        statusText.textContent = "Ready. Drag handles to move the triangle.";
+        updateSidebar();
+        runPythonUpdate();
+      } catch (error) {
+        console.error(error);
+        statusText.textContent = "Could not load Pyodide. Check your connection.";
+      }
+    }
+
+    drawScene();
+    bootPython();
+  </script>
+</body>
+</html>
