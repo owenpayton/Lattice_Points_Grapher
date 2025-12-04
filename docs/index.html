@@ -13,6 +13,7 @@
       --muted: #4b5563;
       --accent: #1b9aaa;
       --accent-2: #f48c06;
+      --edge-accent: #c026d3;
       --accent-3: #2a9d8f;
     }
 
@@ -43,6 +44,35 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 12px;
+    }
+
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tab {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
     }
 
     canvas {
@@ -100,6 +130,69 @@
       color: var(--muted);
     }
 
+    .mini-grid {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .cluster {
+      margin-bottom: 14px;
+    }
+
+    .cluster-label {
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .equation {
+      text-align: center;
+      font-weight: 600;
+      padding: 10px;
+      border: 1px dashed var(--border);
+      border-radius: 6px;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .pick-work {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: #fefefe;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .pick-line {
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .pick-line + .pick-line {
+      margin-top: 6px;
+    }
+
+    .pick-line.alert {
+      color: #b91c1c;
+    }
+
+    .accent-stat {
+      border-color: var(--edge-accent);
+      background: #fdf4ff;
+    }
+
+    .shared-edge-value {
+      color: var(--edge-accent);
+    }
+
     @media (max-width: 960px) {
       .layout {
         grid-template-columns: 1fr;
@@ -114,29 +207,110 @@
   <div class="container">
     <div class="layout">
       <section class="card">
+        <div class="tab-bar" role="tablist">
+          <button class="tab active" data-tab="triangle" aria-selected="true">Triangle</button>
+          <button class="tab" data-tab="additive" aria-selected="false">Polygon Builder</button>
+        </div>
         <canvas id="gridCanvas" aria-label="Lattice triangle canvas"></canvas>
       </section>
 
       <aside class="card">
-        <div class="stats">
-          <div class="stat">
-            <small>Area</small>
-            <strong id="areaValue">0</strong>
+        <div id="trianglePanel">
+          <div class="stats">
+            <div class="stat">
+              <small>Area</small>
+              <strong id="areaValue">0</strong>
+            </div>
+            <div class="stat">
+              <small>Boundary points</small>
+              <strong id="boundaryValue">0</strong>
+            </div>
+            <div class="stat">
+              <small>Interior points</small>
+              <strong id="interiorValue">0</strong>
+            </div>
           </div>
-          <div class="stat">
-            <small>Boundary points</small>
-            <strong id="boundaryValue">0</strong>
-          </div>
-          <div class="stat">
-            <small>Interior points</small>
-            <strong id="interiorValue">0</strong>
+
+          <div class="vertices">
+            <div class="vertex"><span>A</span><span id="vertexA">(0, 0)</span></div>
+            <div class="vertex"><span>B</span><span id="vertexB">(0, 0)</span></div>
+            <div class="vertex"><span>C</span><span id="vertexC">(0, 0)</span></div>
           </div>
         </div>
 
-        <div class="vertices">
-          <div class="vertex"><span>A</span><span id="vertexA">(0, 0)</span></div>
-          <div class="vertex"><span>B</span><span id="vertexB">(0, 0)</span></div>
-          <div class="vertex"><span>C</span><span id="vertexC">(0, 0)</span></div>
+        <div id="additivePanel" class="hidden">
+          <div class="cluster">
+            <div class="cluster-label">P1</div>
+            <div class="stats mini-grid">
+              <div class="stat">
+                <small>Area</small>
+                <strong id="addP1Area">0</strong>
+              </div>
+              <div class="stat">
+                <small>Boundary</small>
+                <strong id="addP1Boundary">0</strong>
+              </div>
+              <div class="stat">
+                <small>Interior</small>
+                <strong id="addP1Interior">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="cluster">
+            <div class="cluster-label">P2</div>
+            <div class="stats mini-grid">
+              <div class="stat">
+                <small>Area</small>
+                <strong id="addP2Area">0</strong>
+              </div>
+              <div class="stat">
+                <small>Boundary</small>
+                <strong id="addP2Boundary">0</strong>
+              </div>
+              <div class="stat">
+                <small>Interior</small>
+                <strong id="addP2Interior">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="cluster">
+            <div class="cluster-label">P1 ∪ P2</div>
+            <div class="stats mini-grid">
+              <div class="stat">
+                <small>Area</small>
+                <strong id="addUnionArea">0</strong>
+              </div>
+              <div class="stat">
+                <small>Boundary</small>
+                <strong id="addUnionBoundary">0</strong>
+              </div>
+              <div class="stat">
+                <small>Interior</small>
+                <strong id="addUnionInterior">0</strong>
+              </div>
+              <div class="stat accent-stat">
+                <small>Shared edge interior</small>
+                <strong id="addEdgeInterior" class="shared-edge-value">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="equation" id="addInteriorEquation">I(P1 ∪ P2) = I(P1) + I(P2) + I(shared) = 0</div>
+          <div class="pick-work" id="addPickWork">
+            <div class="pick-line">A = I + B/2 - 1</div>
+            <div class="pick-line">P1: 0 = 0 + (0 / 2) - 1 = 0</div>
+            <div class="pick-line">P2: 0 = 0 + (0 / 2) - 1 = 0</div>
+            <div class="pick-line">P1 ∪ P2: 0 = 0 + (0 / 2) - 1 = 0</div>
+          </div>
+
+          <div class="vertices">
+            <div class="vertex"><span>A</span><span id="addVertexA">(0, 0)</span></div>
+            <div class="vertex"><span>B</span><span id="addVertexB">(0, 0)</span></div>
+            <div class="vertex"><span>C</span><span id="addVertexC">(0, 0)</span></div>
+            <div class="vertex"><span>D</span><span id="addVertexD">(0, 0)</span></div>
+          </div>
         </div>
       </aside>
     </div>
@@ -150,31 +324,95 @@
     const boundaryEl = document.getElementById("boundaryValue");
     const interiorEl = document.getElementById("interiorValue");
     const vertexEls = [document.getElementById("vertexA"), document.getElementById("vertexB"), document.getElementById("vertexC")];
+    const tabButtons = document.querySelectorAll(".tab");
+    const trianglePanel = document.getElementById("trianglePanel");
+    const additivePanel = document.getElementById("additivePanel");
+    const additiveStatsEls = {
+      p1: {
+        area: document.getElementById("addP1Area"),
+        boundary: document.getElementById("addP1Boundary"),
+        interior: document.getElementById("addP1Interior"),
+      },
+      p2: {
+        area: document.getElementById("addP2Area"),
+        boundary: document.getElementById("addP2Boundary"),
+        interior: document.getElementById("addP2Interior"),
+      },
+      union: {
+        area: document.getElementById("addUnionArea"),
+        boundary: document.getElementById("addUnionBoundary"),
+        interior: document.getElementById("addUnionInterior"),
+      },
+      edgeInterior: document.getElementById("addEdgeInterior"),
+      equation: document.getElementById("addInteriorEquation"),
+      pickWork: document.getElementById("addPickWork"),
+    };
+    const additiveVertexEls = [
+      document.getElementById("addVertexA"),
+      document.getElementById("addVertexB"),
+      document.getElementById("addVertexC"),
+      document.getElementById("addVertexD"),
+    ];
 
     const latticeRange = 10;
     const scale = 32;
+    const SHARED_EDGE_COLOR = "#c026d3";
+    const TABS = { TRIANGLE: "triangle", ADDITIVE: "additive" };
     let originX = 0;
     let originY = 0;
     let activeHandle = null;
     let pyodide;
     let computeSnapshot;
+    let computeAdditiveSnapshot;
     let pythonReady = false;
     let pythonBusy = false;
     let queuedUpdate = false;
+    let currentTab = TABS.TRIANGLE;
 
-    let vertices = [
+    const initialTriangle = [
       { x: -3, y: -2 },
       { x: 3, y: -2 },
       { x: 0, y: 4 },
     ];
 
-    let snapshot = {
-      area: 0,
-      boundary: 0,
-      interior: 0,
-      boundary_points: [],
-      interior_points: [],
-    };
+    const initialAdditive = [
+      { x: -4, y: -1 },
+      { x: 3, y: -1 },
+      { x: 2, y: 4 },
+      { x: -3, y: 4 },
+    ];
+
+    let triangleVertices = initialTriangle.map((v) => ({ ...v }));
+    let additiveVertices = initialAdditive.map((v) => ({ ...v }));
+
+    function createEmptyPolygonSnapshot() {
+      return {
+        area: 0,
+        boundary: 0,
+        interior: 0,
+        boundary_points: [],
+        interior_points: [],
+      };
+    }
+
+    function createEmptyAdditiveSnapshot() {
+      return {
+        t1: createEmptyPolygonSnapshot(),
+        t2: createEmptyPolygonSnapshot(),
+        union: createEmptyPolygonSnapshot(),
+        shared_edge: {
+          interior_count: 0,
+          points: [],
+          endpoints: [
+            [0, 0],
+            [0, 0],
+          ],
+        },
+      };
+    }
+
+    let triangleSnapshot = createEmptyPolygonSnapshot();
+    let additiveSnapshot = createEmptyAdditiveSnapshot();
 
     const PY_CODE = `
 from math import gcd
@@ -182,14 +420,19 @@ from typing import Sequence, Tuple
 
 Point = Tuple[int, int]
 
+
 def _validate_points(points: Sequence[Point]) -> list[Point]:
     pts = [tuple(int(v) for v in p) for p in points]
     if len(pts) < 3:
         raise ValueError("At least three points are required to describe a polygon.")
     return pts
 
+
 def _edge_sign(point: Point, start: Point, end: Point) -> int:
-    return (point[0] - end[0]) * (start[1] - end[1]) - (start[0] - end[0]) * (point[1] - end[1])
+    return (point[0] - end[0]) * (start[1] - end[1]) - (start[0] - end[0]) * (
+        point[1] - end[1]
+    )
+
 
 def _triangle_contains(point: Point, vertices: Sequence[Point]) -> bool:
     a, b, c = vertices
@@ -201,13 +444,45 @@ def _triangle_contains(point: Point, vertices: Sequence[Point]) -> bool:
     on_boundary = d1 == 0 or d2 == 0 or d3 == 0
     return not on_boundary and not (has_neg and has_pos)
 
+
 def is_point_on_edge(point: Point, start: Point, end: Point) -> bool:
-    cross = (point[0] - start[0]) * (end[1] - start[1]) - (point[1] - start[1]) * (end[0] - start[0])
+    cross = (point[0] - start[0]) * (end[1] - start[1]) - (point[1] - start[1]) * (
+        end[0] - start[0]
+    )
     if cross != 0:
         return False
     min_x, max_x = sorted((start[0], end[0]))
     min_y, max_y = sorted((start[1], end[1]))
     return min_x <= point[0] <= max_x and min_y <= point[1] <= max_y
+
+
+def _is_point_in_polygon(point: Point, vertices: Sequence[Point]) -> bool:
+    pts = _validate_points(vertices)
+    x, y = point
+    inside = False
+    n = len(pts)
+    for i in range(n):
+        start = pts[i]
+        end = pts[(i + 1) % n]
+        if is_point_on_edge(point, start, end):
+            return False
+        x1, y1 = start
+        x2, y2 = end
+        if (y1 > y) != (y2 > y):
+            denom = y2 - y1
+            if denom != 0:
+                xinters = (x2 - x1) * (y - y1) / denom + x1
+                if xinters > x:
+                    inside = not inside
+    return inside
+
+
+def _point_in_shape(point: Point, vertices: Sequence[Point]) -> bool:
+    pts = _validate_points(vertices)
+    if len(pts) == 3:
+        return _triangle_contains(point, pts)
+    return _is_point_in_polygon(point, pts)
+
 
 def get_polygon_area(points: Sequence[Point]) -> float:
     pts = _validate_points(points)
@@ -218,6 +493,7 @@ def get_polygon_area(points: Sequence[Point]) -> float:
         area2 += x1 * y2 - x2 * y1
     return abs(area2) / 2.0
 
+
 def get_boundary_points(points: Sequence[Point]) -> int:
     pts = _validate_points(points)
     boundary = 0
@@ -227,32 +503,34 @@ def get_boundary_points(points: Sequence[Point]) -> int:
         boundary += gcd(abs(x2 - x1), abs(y2 - y1))
     return boundary
 
+
 def get_interior_points(points: Sequence[Point]) -> int:
     pts = _validate_points(points)
-    if len(pts) != 3:
-        raise ValueError("Interior enumeration is implemented for triangles only.")
     min_x = min(p[0] for p in pts)
     max_x = max(p[0] for p in pts)
     min_y = min(p[1] for p in pts)
     max_y = max(p[1] for p in pts)
 
     interior = 0
+    n = len(pts)
     for x in range(min_x, max_x + 1):
         for y in range(min_y, max_y + 1):
             candidate = (x, y)
             if candidate in pts:
                 continue
-            if any(is_point_on_edge(candidate, pts[i], pts[(i + 1) % 3]) for i in range(3)):
+            if any(is_point_on_edge(candidate, pts[i], pts[(i + 1) % n]) for i in range(n)):
                 continue
-            if _triangle_contains(candidate, pts):
+            if _point_in_shape(candidate, pts):
                 interior += 1
     return interior
 
+
 def collect_boundary_points(vertices: Sequence[Point]) -> list[Point]:
+    pts = _validate_points(vertices)
     boundary = set()
-    for i in range(3):
-        start = vertices[i]
-        end = vertices[(i + 1) % 3]
+    for i in range(len(pts)):
+        start = pts[i]
+        end = pts[(i + 1) % len(pts)]
         dx, dy = end[0] - start[0], end[1] - start[1]
         steps = gcd(abs(dx), abs(dy))
         if steps == 0:
@@ -263,6 +541,7 @@ def collect_boundary_points(vertices: Sequence[Point]) -> list[Point]:
             boundary.add((start[0] + step_x * j, start[1] + step_y * j))
     return sorted(boundary)
 
+
 def collect_interior_points(vertices: Sequence[Point]) -> list[Point]:
     pts = _validate_points(vertices)
     min_x = min(p[0] for p in pts)
@@ -271,16 +550,18 @@ def collect_interior_points(vertices: Sequence[Point]) -> list[Point]:
     max_y = max(p[1] for p in pts)
 
     interior = []
+    n = len(pts)
     for x in range(min_x, max_x + 1):
         for y in range(min_y, max_y + 1):
             candidate = (x, y)
             if candidate in pts:
                 continue
-            if any(is_point_on_edge(candidate, pts[i], pts[(i + 1) % 3]) for i in range(3)):
+            if any(is_point_on_edge(candidate, pts[i], pts[(i + 1) % n]) for i in range(n)):
                 continue
-            if _triangle_contains(candidate, pts):
+            if _point_in_shape(candidate, pts):
                 interior.append(candidate)
     return interior
+
 
 def compute_snapshot(vertices: Sequence[Point]):
     pts = [tuple(int(v) for v in pair) for pair in vertices]
@@ -290,6 +571,39 @@ def compute_snapshot(vertices: Sequence[Point]):
         "interior": get_interior_points(pts),
         "boundary_points": collect_boundary_points(pts),
         "interior_points": collect_interior_points(pts),
+    }
+
+
+def _segment_interior_lattice_points(start: Point, end: Point) -> tuple[int, list[Point]]:
+    dx, dy = end[0] - start[0], end[1] - start[1]
+    steps = gcd(abs(dx), abs(dy))
+    if steps <= 1:
+        return 0, []
+    step_x, step_y = dx // steps, dy // steps
+    points = [
+        (start[0] + step_x * i, start[1] + step_y * i)
+        for i in range(1, steps)
+    ]
+    return steps - 1, points
+
+
+def compute_additive_snapshot(vertices: Sequence[Point]):
+    pts = _validate_points(vertices)
+    if len(pts) != 4:
+        raise ValueError("Additive snapshot expects exactly four vertices.")
+    a, b, c, d = pts
+
+    triangle_one = compute_snapshot((a, b, c))
+    triangle_two = compute_snapshot((a, d, c))
+    union = compute_snapshot(pts)
+
+    edge_interior_count, edge_interior_points = _segment_interior_lattice_points(a, c)
+
+    return {
+        "t1": triangle_one,
+        "t2": triangle_two,
+        "union": union,
+        "shared_edge": {"points": edge_interior_points, "interior_count": edge_interior_count, "endpoints": [a, c]},
     }
 `;
 
@@ -312,6 +626,87 @@ def compute_snapshot(vertices: Sequence[Point]):
         x: Math.round((point.x - originX) / scale),
         y: Math.round((originY - point.y) / scale),
       });
+    }
+
+    function polygonAreaValue(vertices) {
+      if (!vertices || vertices.length < 3) return 0;
+      let area2 = 0;
+      for (let i = 0; i < vertices.length; i++) {
+        const current = vertices[i];
+        const next = vertices[(i + 1) % vertices.length];
+        area2 += current.x * next.y - next.x * current.y;
+      }
+      return area2 / 2;
+    }
+
+    function orientation(a, b, c) {
+      return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    }
+
+    function onSegment(a, b, c) {
+      return (
+        b.x >= Math.min(a.x, c.x) &&
+        b.x <= Math.max(a.x, c.x) &&
+        b.y >= Math.min(a.y, c.y) &&
+        b.y <= Math.max(a.y, c.y)
+      );
+    }
+
+    function segmentsIntersect(p1, p2, p3, p4) {
+      const o1 = orientation(p1, p2, p3);
+      const o2 = orientation(p1, p2, p4);
+      const o3 = orientation(p3, p4, p1);
+      const o4 = orientation(p3, p4, p2);
+
+      if (o1 === 0 && onSegment(p1, p3, p2)) return true;
+      if (o2 === 0 && onSegment(p1, p4, p2)) return true;
+      if (o3 === 0 && onSegment(p3, p1, p4)) return true;
+      if (o4 === 0 && onSegment(p3, p2, p4)) return true;
+
+      return o1 * o2 < 0 && o3 * o4 < 0;
+    }
+
+    function isSimplePolygon(vertices) {
+      if (!vertices || vertices.length < 3) return false;
+      const unique = new Set(vertices.map((v) => `${v.x},${v.y}`));
+      if (unique.size !== vertices.length) return false;
+      if (Math.abs(polygonAreaValue(vertices)) < 0.5) return false;
+
+      const n = vertices.length;
+      for (let i = 0; i < n; i++) {
+        const a1 = vertices[i];
+        const a2 = vertices[(i + 1) % n];
+        for (let j = i + 1; j < n; j++) {
+          if (Math.abs(i - j) <= 1) continue;
+          if (i === 0 && j === n - 1) continue;
+          const b1 = vertices[j];
+          const b2 = vertices[(j + 1) % n];
+          if (segmentsIntersect(a1, a2, b1, b2)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    function trianglesOnOppositeSides(vertices) {
+      if (!vertices || vertices.length !== 4) return false;
+      const [a, b, c, d] = vertices;
+      const oB = orientation(a, c, b);
+      const oD = orientation(a, c, d);
+      if (oB === 0 || oD === 0) {
+        return false;
+      }
+      return oB * oD < 0;
+    }
+
+    function pickHolds(snapshot) {
+      if (!snapshot) return false;
+      const area = snapshot.area ?? 0;
+      const boundary = snapshot.boundary ?? 0;
+      const interior = snapshot.interior ?? 0;
+      const rhs = interior + boundary / 2 - 1;
+      return Math.abs(area - rhs) < 1e-6;
     }
 
     function drawGrid(rect) {
@@ -361,19 +756,30 @@ def compute_snapshot(vertices: Sequence[Point]):
       ctx.restore();
     }
 
-    function drawTriangle() {
-      const pts = vertices.map(latticeToCanvas);
+    function getActiveVertices() {
+      return currentTab === TABS.TRIANGLE ? triangleVertices : additiveVertices;
+    }
+
+    function drawPolygon(vertexList, options = {}) {
+      if (!vertexList || vertexList.length === 0) return;
+      const { fill = "rgba(27, 154, 170, 0.16)", stroke = "#1b9aaa", lineWidth = 2.2 } = options;
+      const pts = vertexList.map(latticeToCanvas);
       ctx.save();
       ctx.beginPath();
       ctx.moveTo(pts[0].x, pts[0].y);
-      ctx.lineTo(pts[1].x, pts[1].y);
-      ctx.lineTo(pts[2].x, pts[2].y);
+      for (let i = 1; i < pts.length; i++) {
+        ctx.lineTo(pts[i].x, pts[i].y);
+      }
       ctx.closePath();
-      ctx.fillStyle = "rgba(27, 154, 170, 0.16)";
-      ctx.strokeStyle = "#1b9aaa";
-      ctx.lineWidth = 2.2;
-      ctx.fill();
-      ctx.stroke();
+      if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+      if (stroke) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+      }
       ctx.restore();
     }
 
@@ -389,9 +795,9 @@ def compute_snapshot(vertices: Sequence[Point]):
       ctx.restore();
     }
 
-    function drawHandles() {
+    function drawHandles(verts) {
       ctx.save();
-      for (const vertex of vertices) {
+      for (const vertex of verts) {
         const p = latticeToCanvas(vertex);
         ctx.beginPath();
         ctx.fillStyle = "#ffffff";
@@ -402,6 +808,39 @@ def compute_snapshot(vertices: Sequence[Point]):
         ctx.stroke();
       }
       ctx.restore();
+    }
+
+    function drawSharedEdge(sharedEdge) {
+      if (!sharedEdge) return;
+      const [start, end] = sharedEdge.endpoints || [
+        [additiveVertices[0].x, additiveVertices[0].y],
+        [additiveVertices[2].x, additiveVertices[2].y],
+      ];
+      const startPt = latticeToCanvas({ x: start[0], y: start[1] });
+      const endPt = latticeToCanvas({ x: end[0], y: end[1] });
+      ctx.save();
+      ctx.strokeStyle = SHARED_EDGE_COLOR;
+      ctx.lineWidth = 3;
+      ctx.setLineDash([6, 6]);
+      ctx.beginPath();
+      ctx.moveTo(startPt.x, startPt.y);
+      ctx.lineTo(endPt.x, endPt.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+      drawPoints(sharedEdge.points, SHARED_EDGE_COLOR);
+    }
+
+    function drawAdditiveScene() {
+      drawPoints(additiveSnapshot.union.boundary_points, "#f48c06");
+      drawPoints(additiveSnapshot.union.interior_points, "#2a9d8f");
+      const verts = additiveVertices;
+      const triangleOne = [verts[0], verts[1], verts[2]];
+      const triangleTwo = [verts[0], verts[3], verts[2]];
+      drawPolygon(triangleOne, { fill: "rgba(27, 154, 170, 0.16)", stroke: "#1b9aaa", lineWidth: 2.2 });
+      drawPolygon(triangleTwo, { fill: "rgba(244, 140, 6, 0.18)", stroke: "#f48c06", lineWidth: 2.2 });
+      drawSharedEdge(additiveSnapshot.shared_edge);
+      drawHandles(additiveVertices);
     }
 
     function drawScene() {
@@ -416,25 +855,99 @@ def compute_snapshot(vertices: Sequence[Point]):
       originY = rect.height / 2;
 
       drawGrid(rect);
-      drawPoints(snapshot.boundary_points, "#f48c06");
-      drawPoints(snapshot.interior_points, "#2a9d8f");
-      drawTriangle();
-      drawHandles();
+      if (currentTab === TABS.TRIANGLE) {
+        drawPoints(triangleSnapshot.boundary_points, "#f48c06");
+        drawPoints(triangleSnapshot.interior_points, "#2a9d8f");
+        drawPolygon(triangleVertices);
+        drawHandles(triangleVertices);
+      } else {
+        drawAdditiveScene();
+      }
+    }
+
+    function formatArea(value) {
+      if (!Number.isFinite(value)) return "0";
+      return Number.isInteger(value) ? value.toString() : value.toFixed(2);
+    }
+
+    function updateTriangleSidebar() {
+      areaEl.textContent = formatArea(triangleSnapshot.area ?? 0);
+      boundaryEl.textContent = triangleSnapshot.boundary ?? 0;
+      interiorEl.textContent = triangleSnapshot.interior ?? 0;
+      triangleVertices.forEach((vertex, idx) => {
+        if (vertexEls[idx]) {
+          vertexEls[idx].textContent = `(${vertex.x}, ${vertex.y})`;
+        }
+      });
+    }
+
+    function updateAdditiveSidebar() {
+      const p1 = additiveSnapshot.t1 ?? createEmptyPolygonSnapshot();
+      const p2 = additiveSnapshot.t2 ?? createEmptyPolygonSnapshot();
+      const union = additiveSnapshot.union ?? createEmptyPolygonSnapshot();
+      const shared = additiveSnapshot.shared_edge ?? { interior_count: 0, points: [] };
+
+      additiveStatsEls.p1.area.textContent = formatArea(p1.area ?? 0);
+      additiveStatsEls.p1.boundary.textContent = p1.boundary ?? 0;
+      additiveStatsEls.p1.interior.textContent = p1.interior ?? 0;
+
+      additiveStatsEls.p2.area.textContent = formatArea(p2.area ?? 0);
+      additiveStatsEls.p2.boundary.textContent = p2.boundary ?? 0;
+      additiveStatsEls.p2.interior.textContent = p2.interior ?? 0;
+
+      additiveStatsEls.union.area.textContent = formatArea(union.area ?? 0);
+      additiveStatsEls.union.boundary.textContent = union.boundary ?? 0;
+      additiveStatsEls.union.interior.textContent = union.interior ?? 0;
+
+      const p1Interior = p1.interior ?? 0;
+      const p2Interior = p2.interior ?? 0;
+      const unionInterior = union.interior ?? 0;
+      const edgeInterior = shared.interior_count ?? 0;
+      additiveStatsEls.edgeInterior.textContent = edgeInterior;
+      const equationExpression = `${p1Interior} + ${p2Interior} + ${edgeInterior} = ${unionInterior}`;
+      additiveStatsEls.equation.textContent = `I(P1 ∪ P2) = I(P1) + I(P2) + I(shared edge) = ${equationExpression}`;
+
+      const pickLine = (label, snapshot) => {
+        const area = snapshot.area ?? 0;
+        const boundary = snapshot.boundary ?? 0;
+        const interior = snapshot.interior ?? 0;
+        const rhs = interior + boundary / 2 - 1;
+        const matches = Math.abs(area - rhs) < 1e-6;
+        return {
+          text: `${label}: ${formatArea(area)} = ${interior} + (${boundary} / 2) - 1 = ${formatArea(rhs)}`,
+          matches,
+        };
+      };
+
+      const theoremLines = [
+        { text: "A(P) = I(P) + B(P) / 2 - 1", matches: true },
+        pickLine("P1", p1),
+        pickLine("P2", p2),
+        pickLine("P1 ∪ P2", union),
+      ];
+      additiveStatsEls.pickWork.innerHTML = theoremLines
+        .map(
+          (line) =>
+            `<div class="pick-line${line.matches ? "" : " alert"}">${line.text}</div>`
+        )
+        .join("");
+
+      additiveVertices.forEach((vertex, idx) => {
+        if (additiveVertexEls[idx]) {
+          additiveVertexEls[idx].textContent = `(${vertex.x}, ${vertex.y})`;
+        }
+      });
     }
 
     function updateSidebar() {
-      const formatArea = (value) => {
-        if (Number.isInteger(value)) return value.toString();
-        return value.toFixed(2);
-      };
-
-      areaEl.textContent = formatArea(snapshot.area ?? 0);
-      boundaryEl.textContent = snapshot.boundary ?? 0;
-      interiorEl.textContent = snapshot.interior ?? 0;
-
-      vertices.forEach((vertex, idx) => {
-        vertexEls[idx].textContent = `(${vertex.x}, ${vertex.y})`;
-      });
+      const isTriangle = currentTab === TABS.TRIANGLE;
+      trianglePanel.classList.toggle("hidden", !isTriangle);
+      additivePanel.classList.toggle("hidden", isTriangle);
+      if (isTriangle) {
+        updateTriangleSidebar();
+      } else {
+        updateAdditiveSidebar();
+      }
     }
 
     async function runPythonUpdate() {
@@ -446,9 +959,15 @@ def compute_snapshot(vertices: Sequence[Point]):
       pythonBusy = true;
       let pyVertices;
       try {
-        pyVertices = pyodide.toPy(vertices.map((v) => [v.x, v.y]));
-        const result = computeSnapshot(pyVertices).toJs({ dict_converter: Object.fromEntries });
-        snapshot = result;
+        if (currentTab === TABS.TRIANGLE) {
+          pyVertices = pyodide.toPy(triangleVertices.map((v) => [v.x, v.y]));
+          const result = computeSnapshot(pyVertices).toJs({ dict_converter: Object.fromEntries });
+          triangleSnapshot = result;
+        } else {
+          pyVertices = pyodide.toPy(additiveVertices.map((v) => [v.x, v.y]));
+          const result = computeAdditiveSnapshot(pyVertices).toJs({ dict_converter: Object.fromEntries });
+          additiveSnapshot = result;
+        }
         updateSidebar();
         drawScene();
       } catch (error) {
@@ -472,8 +991,9 @@ def compute_snapshot(vertices: Sequence[Point]):
 
     function findHandle(position) {
       const radius = 14;
-      for (let i = 0; i < vertices.length; i++) {
-        const center = latticeToCanvas(vertices[i]);
+      const verts = getActiveVertices();
+      for (let i = 0; i < verts.length; i++) {
+        const center = latticeToCanvas(verts[i]);
         const dist2 = (center.x - position.x) ** 2 + (center.y - position.y) ** 2;
         if (dist2 <= radius ** 2) return i;
       }
@@ -500,8 +1020,39 @@ def compute_snapshot(vertices: Sequence[Point]):
     canvas.addEventListener("pointermove", (evt) => {
       if (activeHandle === null) return;
       const pos = pointerPosition(evt);
-      vertices[activeHandle] = canvasToLattice(pos);
+      const verts = getActiveVertices();
+      const previous = { ...verts[activeHandle] };
+      const next = canvasToLattice(pos);
+      if (previous.x === next.x && previous.y === next.y) {
+        return;
+      }
+      verts[activeHandle] = next;
+      if (
+        currentTab === TABS.ADDITIVE &&
+        (!isSimplePolygon(additiveVertices) || !trianglesOnOppositeSides(additiveVertices))
+      ) {
+        verts[activeHandle] = previous;
+        drawScene();
+        return;
+      }
       onVertexChange();
+    });
+
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const targetTab = button.dataset.tab;
+        if (!targetTab || targetTab === currentTab) return;
+        currentTab = targetTab;
+        tabButtons.forEach((btn) => {
+          const isActive = btn.dataset.tab === targetTab;
+          btn.classList.toggle("active", isActive);
+          btn.setAttribute("aria-selected", isActive ? "true" : "false");
+        });
+        activeHandle = null;
+        updateSidebar();
+        drawScene();
+        runPythonUpdate();
+      });
     });
 
     function releasePointer(evt) {
@@ -522,6 +1073,7 @@ def compute_snapshot(vertices: Sequence[Point]):
         pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/" });
         await pyodide.runPythonAsync(PY_CODE);
         computeSnapshot = pyodide.globals.get("compute_snapshot");
+        computeAdditiveSnapshot = pyodide.globals.get("compute_additive_snapshot");
         pythonReady = true;
         updateSidebar();
         runPythonUpdate();
@@ -530,6 +1082,7 @@ def compute_snapshot(vertices: Sequence[Point]):
       }
     }
 
+    updateSidebar();
     drawScene();
     bootPython();
   </script>
