@@ -38,3 +38,7 @@ ignore = [
 minversion = "7.0"
 addopts = "-q"
 testpaths = ["tests"]
+
+[tool.setuptools.packages.find]
+include = ["lattice_triangle*"]
+exclude = ["web*", "docs*", "tests*"]

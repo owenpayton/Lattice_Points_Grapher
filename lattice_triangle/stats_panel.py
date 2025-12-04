@@ -42,13 +42,19 @@ class StatsPanel(QWidget):
             label = QLabel("(0, 0)")
             label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
             self.vertex_labels.append(label)
-            form.addRow(f"Vertex {name}", label)
+            form.addRow(f"Vertex <i>{name}</i>", label)
 
-        form.addRow("Area", self.area_label)
-        form.addRow("Boundary points", self.boundary_label)
-        form.addRow("Interior points", self.interior_label)
+        form.addRow("<i>A</i> (Area)", self.area_label)
+        form.addRow("<i>B</i> (Boundary)", self.boundary_label)
+        form.addRow("<i>I</i> (Interior)", self.interior_label)
 
         root_layout.addLayout(form)
+
+        theorem_label = QLabel("<i>A</i> = <i>I</i> + <i>B</i>/2 - 1")
+        theorem_label.setAlignment(Qt.AlignCenter)
+        theorem_label.setStyleSheet("color: #555; margin-top: 12px;")
+        root_layout.addWidget(theorem_label)
+
         root_layout.addStretch()
         self.setLayout(root_layout)
 

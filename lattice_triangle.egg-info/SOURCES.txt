@@ -1,3 +1,4 @@
+README.md
 pyproject.toml
 lattice_triangle/__init__.py
 lattice_triangle/geometry.py
