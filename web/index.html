@@ -394,7 +394,7 @@
       <section class="card">
         <div class="tab-bar" role="tablist">
           <button class="tab active" data-tab="triangle" aria-selected="true">Triangle</button>
-          <button class="tab" data-tab="additive" aria-selected="false">Shared Edge</button>
+          <button class="tab" data-tab="additive" aria-selected="false">Shared Edge Test</button>
           <button class="tab" data-tab="induction" aria-selected="false">Induction Proof</button>
         </div>
         <canvas id="gridCanvas" aria-label="Lattice triangle canvas"></canvas>
@@ -1566,7 +1566,7 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
       // Update step title and description
       if (inductionStep === 0) {
         indStepTitle.textContent = "Step 0: Base Case";
-        indStepDesc.innerHTML = `We decompose the triangle into <strong>${totalSteps} base case triangles</strong> (each with area ½, exactly 3 boundary points, and 0 interior points). Click Next to verify the base case.`;
+        indStepDesc.innerHTML = `We decompose the triangle into <strong>${totalSteps} base case triangles</strong> (each with area ½, B=3, I=0).`;
       } else if (inductionStep === 1) {
         indStepTitle.textContent = "Step 1: Base Case";
         indStepDesc.innerHTML = `<strong>P₁ is a base case triangle</strong>: A = ½, B = 3, I = 0.<br>Check: ½ = 0 + 3/2 − 1 = ½ ✓<br>The conjecture holds for the base case!`;
