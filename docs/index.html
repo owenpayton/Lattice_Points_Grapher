@@ -15,13 +15,14 @@
       --accent-2: #f48c06;
       --edge-accent: #c026d3;
       --accent-3: #2a9d8f;
+      --success: #059669;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
     }
@@ -34,7 +35,7 @@
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(520px, 2fr) minmax(240px, 1fr);
+      grid-template-columns: minmax(520px, 2fr) minmax(280px, 1fr);
       gap: 12px;
       align-items: start;
     }
@@ -62,6 +63,7 @@
       padding: 8px 12px;
       cursor: pointer;
       transition: all 0.15s ease;
+      font-size: 13px;
     }
 
     .tab:focus-visible {
@@ -184,6 +186,10 @@
       color: #b91c1c;
     }
 
+    .pick-line.success {
+      color: var(--success);
+    }
+
     .accent-stat {
       border-color: var(--edge-accent);
       background: #fdf4ff;
@@ -191,6 +197,185 @@
 
     .shared-edge-value {
       color: var(--edge-accent);
+    }
+
+    /* Induction Proof Panel Styles */
+    .step-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .step-btn {
+      flex: 1;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .step-btn:hover:not(:disabled) {
+      background: #eef2f7;
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .step-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .step-btn.primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .step-btn.primary:hover:not(:disabled) {
+      background: #178a99;
+    }
+
+    .progress-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+
+    .progress-dot {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      transition: background 0.2s ease;
+    }
+
+    .progress-dot.active {
+      background: var(--accent);
+    }
+
+    .progress-dot.complete {
+      background: var(--success);
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 15px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .step-description {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .proof-box {
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+    }
+
+    .proof-box-title {
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .proof-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      font-size: 13px;
+      border-bottom: 1px dashed #e5e7eb;
+    }
+
+    .proof-row:last-child {
+      border-bottom: none;
+    }
+
+    .proof-row .label {
+      color: var(--muted);
+    }
+
+    .proof-row .value {
+      font-weight: 600;
+      font-family: "SF Mono", "Consolas", monospace;
+    }
+
+    .proof-row.highlight {
+      background: #ecfdf5;
+      margin: 0 -12px;
+      padding: 6px 12px;
+      border-radius: 4px;
+    }
+
+    .proof-row.highlight .value {
+      color: var(--success);
+    }
+
+    .proof-row.absorbed {
+      background: #fdf4ff;
+      margin: 0 -12px;
+      padding: 6px 12px;
+      border-radius: 4px;
+    }
+
+    .proof-row.absorbed .value {
+      color: var(--edge-accent);
+    }
+
+    .triangle-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 2px solid;
+    }
+
+    .final-check {
+      text-align: center;
+      padding: 14px;
+      border-radius: 6px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      margin-top: 12px;
+    }
+
+    .final-check .checkmark {
+      font-size: 28px;
+      margin-bottom: 6px;
+    }
+
+    .final-check .message {
+      font-weight: 600;
+      color: var(--success);
+      font-size: 14px;
     }
 
     @media (max-width: 960px) {
@@ -209,7 +394,8 @@
       <section class="card">
         <div class="tab-bar" role="tablist">
           <button class="tab active" data-tab="triangle" aria-selected="true">Triangle</button>
-          <button class="tab" data-tab="additive" aria-selected="false">Polygon Builder</button>
+          <button class="tab" data-tab="additive" aria-selected="false">Shared Edge</button>
+          <button class="tab" data-tab="induction" aria-selected="false">Induction Proof</button>
         </div>
         <canvas id="gridCanvas" aria-label="Lattice triangle canvas"></canvas>
       </section>
@@ -312,6 +498,62 @@
             <div class="vertex"><span>D</span><span id="addVertexD">(0, 0)</span></div>
           </div>
         </div>
+
+        <div id="inductionPanel" class="hidden">
+          <div class="step-controls">
+            <button class="step-btn" id="indPrevBtn">← Prev</button>
+            <button class="step-btn" id="indResetBtn">Reset</button>
+            <button class="step-btn primary" id="indNextBtn">Next →</button>
+          </div>
+
+          <div class="progress-bar" id="indProgressBar"></div>
+
+          <div class="step-title" id="indStepTitle">Step 0: Ready</div>
+          <div class="step-description" id="indStepDesc">
+            We decompose the triangle into base case triangles (area ½ each). Click Next to start the induction.
+          </div>
+
+          <div class="triangle-legend" id="indLegend"></div>
+
+          <div class="proof-box">
+            <div class="proof-box-title">Current Accumulated Region</div>
+            <div class="proof-row">
+              <span class="label">Area (A)</span>
+              <span class="value" id="indArea">0</span>
+            </div>
+            <div class="proof-row">
+              <span class="label">Boundary (B)</span>
+              <span class="value" id="indBoundary">0</span>
+            </div>
+            <div class="proof-row">
+              <span class="label">Interior (I)</span>
+              <span class="value" id="indInterior">0</span>
+            </div>
+            <div class="proof-row highlight">
+              <span class="label">I + B/2 − 1</span>
+              <span class="value" id="indPickResult">0</span>
+            </div>
+          </div>
+
+          <div class="proof-box" id="indGlueBox">
+            <div class="proof-box-title">Gluing This Step</div>
+            <div class="proof-row">
+              <span class="label">New triangle area</span>
+              <span class="value" id="indNewArea">½</span>
+            </div>
+            <div class="proof-row absorbed">
+              <span class="label">Edge pts → interior</span>
+              <span class="value" id="indAbsorbed">0</span>
+            </div>
+          </div>
+
+          <div class="pick-work" id="indPickWork"></div>
+
+          <div class="final-check hidden" id="indFinalCheck">
+            <div class="checkmark">✓</div>
+            <div class="message">A = I + B/2 − 1 verified by induction!</div>
+          </div>
+        </div>
       </aside>
     </div>
   </div>
@@ -327,6 +569,7 @@
     const tabButtons = document.querySelectorAll(".tab");
     const trianglePanel = document.getElementById("trianglePanel");
     const additivePanel = document.getElementById("additivePanel");
+    const inductionPanel = document.getElementById("inductionPanel");
     const additiveStatsEls = {
       p1: {
         area: document.getElementById("addP1Area"),
@@ -354,10 +597,33 @@
       document.getElementById("addVertexD"),
     ];
 
+    // Induction panel elements
+    const indPrevBtn = document.getElementById("indPrevBtn");
+    const indNextBtn = document.getElementById("indNextBtn");
+    const indResetBtn = document.getElementById("indResetBtn");
+    const indProgressBar = document.getElementById("indProgressBar");
+    const indStepTitle = document.getElementById("indStepTitle");
+    const indStepDesc = document.getElementById("indStepDesc");
+    const indLegend = document.getElementById("indLegend");
+    const indArea = document.getElementById("indArea");
+    const indBoundary = document.getElementById("indBoundary");
+    const indInterior = document.getElementById("indInterior");
+    const indPickResult = document.getElementById("indPickResult");
+    const indGlueBox = document.getElementById("indGlueBox");
+    const indNewArea = document.getElementById("indNewArea");
+    const indAbsorbed = document.getElementById("indAbsorbed");
+    const indPickWork = document.getElementById("indPickWork");
+    const indFinalCheck = document.getElementById("indFinalCheck");
+
     const latticeRange = 10;
-    const scale = 32;
+    const DEFAULT_SCALE = 32;
+    const INDUCTION_SCALE = 70; // Larger scale to see base case triangles better
     const SHARED_EDGE_COLOR = "#c026d3";
-    const TABS = { TRIANGLE: "triangle", ADDITIVE: "additive" };
+    
+    function getScale() {
+      return currentTab === TABS.INDUCTION ? INDUCTION_SCALE : DEFAULT_SCALE;
+    }
+    const TABS = { TRIANGLE: "triangle", ADDITIVE: "additive", INDUCTION: "induction" };
     let originX = 0;
     let originY = 0;
     let activeHandle = null;
@@ -382,8 +648,42 @@
       { x: -3, y: 4 },
     ];
 
+    // Outer triangle for induction proof - will be decomposed into base case triangles
+    // Right triangle with vertices at lattice points, legs of length 4
+    const inductionOuterTriangle = [
+      { x: -2, y: -2 },  // right angle vertex
+      { x: 2, y: -2 },   // base vertex  
+      { x: -2, y: 2 },   // height vertex
+    ];
+
+    // Generate base case triangle colors (we'll have n² = 16 triangles for n=4)
+    const BASE_CASE_COLORS = [
+      { fill: "rgba(27, 154, 170, 0.35)", stroke: "#1b9aaa" },
+      { fill: "rgba(244, 140, 6, 0.35)", stroke: "#f48c06" },
+      { fill: "rgba(42, 157, 143, 0.35)", stroke: "#2a9d8f" },
+      { fill: "rgba(139, 92, 246, 0.35)", stroke: "#8b5cf6" },
+      { fill: "rgba(236, 72, 153, 0.35)", stroke: "#ec4899" },
+      { fill: "rgba(245, 158, 11, 0.35)", stroke: "#f59e0b" },
+      { fill: "rgba(16, 185, 129, 0.35)", stroke: "#10b981" },
+      { fill: "rgba(99, 102, 241, 0.35)", stroke: "#6366f1" },
+      { fill: "rgba(244, 63, 94, 0.35)", stroke: "#f43f5e" },
+      { fill: "rgba(234, 179, 8, 0.35)", stroke: "#eab308" },
+      { fill: "rgba(168, 85, 247, 0.35)", stroke: "#a855f7" },
+      { fill: "rgba(20, 184, 166, 0.35)", stroke: "#14b8a6" },
+      { fill: "rgba(251, 146, 60, 0.35)", stroke: "#fb923c" },
+      { fill: "rgba(34, 197, 94, 0.35)", stroke: "#22c55e" },
+      { fill: "rgba(192, 38, 211, 0.35)", stroke: "#c026d3" },
+      { fill: "rgba(59, 130, 246, 0.35)", stroke: "#3b82f6" },
+    ];
+
     let triangleVertices = initialTriangle.map((v) => ({ ...v }));
     let additiveVertices = initialAdditive.map((v) => ({ ...v }));
+
+    // Induction state
+    let inductionStep = 0;
+    let inductionTriangles = [];
+    let inductionSnapshots = [];
+    let inductionAccumulatedSnapshots = [];
 
     function createEmptyPolygonSnapshot() {
       return {
@@ -615,16 +915,18 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
     }
 
     function latticeToCanvas(point) {
+      const s = getScale();
       return {
-        x: originX + point.x * scale,
-        y: originY - point.y * scale,
+        x: originX + point.x * s,
+        y: originY - point.y * s,
       };
     }
 
     function canvasToLattice(point) {
+      const s = getScale();
       return clampVertex({
-        x: Math.round((point.x - originX) / scale),
-        y: Math.round((originY - point.y) / scale),
+        x: Math.round((point.x - originX) / s),
+        y: Math.round((originY - point.y) / s),
       });
     }
 
@@ -710,15 +1012,19 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
     }
 
     function drawGrid(rect) {
+      const s = getScale();
+      // Use smaller range for induction tab (zoomed in view)
+      const range = currentTab === TABS.INDUCTION ? 5 : latticeRange;
+      
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, rect.width, rect.height);
 
       ctx.save();
       ctx.lineWidth = 1;
       ctx.strokeStyle = "#e5e7eb";
-      for (let i = -latticeRange; i <= latticeRange; i++) {
-        const x = originX + i * scale;
-        const y = originY - i * scale;
+      for (let i = -range; i <= range; i++) {
+        const x = originX + i * s;
+        const y = originY - i * s;
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, rect.height);
@@ -745,11 +1051,12 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
 
       ctx.save();
       ctx.fillStyle = "#9ca3af";
-      for (let x = -latticeRange; x <= latticeRange; x++) {
-        for (let y = -latticeRange; y <= latticeRange; y++) {
+      const dotSize = currentTab === TABS.INDUCTION ? 3.5 : 2.2;
+      for (let x = -range; x <= range; x++) {
+        for (let y = -range; y <= range; y++) {
           const p = latticeToCanvas({ x, y });
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 2.2, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, dotSize, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -757,7 +1064,9 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
     }
 
     function getActiveVertices() {
-      return currentTab === TABS.TRIANGLE ? triangleVertices : additiveVertices;
+      if (currentTab === TABS.TRIANGLE) return triangleVertices;
+      if (currentTab === TABS.ADDITIVE) return additiveVertices;
+      return [];
     }
 
     function drawPolygon(vertexList, options = {}) {
@@ -843,6 +1152,302 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
       drawHandles(additiveVertices);
     }
 
+    // Induction drawing functions - using BASE CASE triangles (area = 1/2)
+    function buildInductionTriangles() {
+      inductionTriangles = [];
+      const v0 = inductionOuterTriangle[0]; // right angle vertex
+      const n = inductionOuterTriangle[1].x - v0.x; // leg length = 4
+      
+      // Generate all base case triangles for the right triangle
+      // Each unit square is divided into 2 base case triangles
+      // For a right triangle with legs n, we have n² base case triangles
+      const allTriangles = [];
+      
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n - i; j++) {
+          // Lower-left triangle of each cell: (i,j), (i+1,j), (i,j+1)
+          allTriangles.push({
+            vertices: [
+              { x: v0.x + i, y: v0.y + j },
+              { x: v0.x + i + 1, y: v0.y + j },
+              { x: v0.x + i, y: v0.y + j + 1 }
+            ],
+            gridPos: { i, j, type: 'lower' }
+          });
+          
+          // Upper-right triangle (only if not on the hypotenuse)
+          if (i + j < n - 1) {
+            allTriangles.push({
+              vertices: [
+                { x: v0.x + i + 1, y: v0.y + j },
+                { x: v0.x + i + 1, y: v0.y + j + 1 },
+                { x: v0.x + i, y: v0.y + j + 1 }
+              ],
+              gridPos: { i, j, type: 'upper' }
+            });
+          }
+        }
+      }
+      
+      // Order triangles using flood-fill from the origin corner for nice animation
+      // Start with the corner triangle and expand outward
+      const ordered = [];
+      const used = new Set();
+      
+      // Helper to get triangle key
+      const getKey = (tri) => tri.vertices.map(v => `${v.x},${v.y}`).sort().join('|');
+      
+      // Helper to check if two triangles share an edge
+      const sharesEdge = (t1, t2) => {
+        const v1 = t1.vertices.map(v => `${v.x},${v.y}`);
+        const v2 = t2.vertices.map(v => `${v.x},${v.y}`);
+        let shared = 0;
+        for (const p of v1) {
+          if (v2.includes(p)) shared++;
+        }
+        return shared === 2;
+      };
+      
+      // Start with bottom-left corner triangle
+      const startTri = allTriangles.find(t => t.gridPos.i === 0 && t.gridPos.j === 0 && t.gridPos.type === 'lower');
+      ordered.push(startTri.vertices);
+      used.add(getKey(startTri));
+      
+      // BFS to add triangles that share edges
+      while (ordered.length < allTriangles.length) {
+        let added = false;
+        for (const tri of allTriangles) {
+          const key = getKey(tri);
+          if (used.has(key)) continue;
+          
+          // Check if this triangle shares an edge with any already-added triangle
+          for (const addedVerts of ordered) {
+            if (sharesEdge({ vertices: addedVerts }, tri)) {
+              ordered.push(tri.vertices);
+              used.add(key);
+              added = true;
+              break;
+            }
+          }
+          if (added) break;
+        }
+        if (!added) {
+          // Fallback: add any remaining triangle
+          for (const tri of allTriangles) {
+            if (!used.has(getKey(tri))) {
+              ordered.push(tri.vertices);
+              used.add(getKey(tri));
+              break;
+            }
+          }
+        }
+      }
+      
+      inductionTriangles = ordered;
+    }
+
+    function getAccumulatedPolygon(stepIndex) {
+      if (stepIndex <= 0) return [];
+      if (stepIndex >= inductionTriangles.length) {
+        return [...inductionOuterTriangle];
+      }
+      
+      // Build the convex hull of all vertices from triangles 0 to stepIndex-1
+      const pointSet = new Set();
+      for (let i = 0; i < stepIndex; i++) {
+        for (const v of inductionTriangles[i]) {
+          pointSet.add(`${v.x},${v.y}`);
+        }
+      }
+      
+      const points = Array.from(pointSet).map(s => {
+        const [x, y] = s.split(',').map(Number);
+        return { x, y };
+      });
+      
+      // Convex hull using gift wrapping (points are always convex for our triangulation)
+      if (points.length < 3) return points;
+      
+      // Find leftmost point
+      let start = points.reduce((a, b) => (a.x < b.x || (a.x === b.x && a.y < b.y)) ? a : b);
+      const hull = [];
+      let current = start;
+      
+      do {
+        hull.push(current);
+        let next = points[0];
+        for (const p of points) {
+          if (next === current || orientation(current, next, p) < 0) {
+            next = p;
+          }
+        }
+        current = next;
+      } while (current !== start && hull.length < points.length + 1);
+      
+      return hull;
+    }
+
+    function getSharedEdgeForStep(stepIndex) {
+      if (stepIndex <= 0 || stepIndex >= inductionTriangles.length) return null;
+      
+      // Find the edge shared between accumulated region and new triangle
+      const newTri = inductionTriangles[stepIndex];
+      const accumulated = getAccumulatedPolygon(stepIndex);
+      
+      if (accumulated.length < 2) return null;
+      
+      // Check each edge of the new triangle against accumulated boundary
+      for (let i = 0; i < 3; i++) {
+        const e1 = newTri[i];
+        const e2 = newTri[(i + 1) % 3];
+        
+        // Check if both endpoints are in the accumulated polygon
+        const e1InAcc = accumulated.some(v => v.x === e1.x && v.y === e1.y);
+        const e2InAcc = accumulated.some(v => v.x === e2.x && v.y === e2.y);
+        
+        if (e1InAcc && e2InAcc) {
+          // Check if this edge is on the boundary of accumulated region
+          for (let j = 0; j < accumulated.length; j++) {
+            const a1 = accumulated[j];
+            const a2 = accumulated[(j + 1) % accumulated.length];
+            if ((a1.x === e1.x && a1.y === e1.y && a2.x === e2.x && a2.y === e2.y) ||
+                (a1.x === e2.x && a1.y === e2.y && a2.x === e1.x && a2.y === e1.y)) {
+              return { start: e1, end: e2 };
+            }
+          }
+        }
+      }
+      
+      return null;
+    }
+
+    function drawInductionScene() {
+      // Draw full outer triangle outline (faded)
+      ctx.save();
+      const fullPts = inductionOuterTriangle.map(latticeToCanvas);
+      ctx.beginPath();
+      ctx.moveTo(fullPts[0].x, fullPts[0].y);
+      for (let i = 1; i < fullPts.length; i++) {
+        ctx.lineTo(fullPts[i].x, fullPts[i].y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = "#94a3b8";
+      ctx.lineWidth = 3.5;
+      ctx.setLineDash([10, 10]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.restore();
+
+      // Draw grid lines inside the outer triangle (faded)
+      ctx.save();
+      ctx.strokeStyle = "#cbd5e1";
+      ctx.lineWidth = 1.5;
+      const v0 = inductionOuterTriangle[0];
+      const n = inductionOuterTriangle[1].x - v0.x;
+      
+      // Draw interior grid
+      for (let i = 0; i <= n; i++) {
+        for (let j = 0; j <= n - i; j++) {
+          const p = latticeToCanvas({ x: v0.x + i, y: v0.y + j });
+          // Draw to adjacent points if within triangle
+          if (i + 1 <= n - j) {
+            const p2 = latticeToCanvas({ x: v0.x + i + 1, y: v0.y + j });
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+          if (j + 1 <= n - i) {
+            const p2 = latticeToCanvas({ x: v0.x + i, y: v0.y + j + 1 });
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+          if (i + 1 <= n - j && j + 1 <= n - i - 1) {
+            const p2 = latticeToCanvas({ x: v0.x + i + 1, y: v0.y + j + 1 });
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      ctx.restore();
+
+      // Draw completed base case triangles
+      for (let i = 0; i < inductionStep && i < inductionTriangles.length; i++) {
+        const tri = inductionTriangles[i];
+        const color = BASE_CASE_COLORS[i % BASE_CASE_COLORS.length];
+        drawPolygon(tri, { fill: color.fill, stroke: color.stroke, lineWidth: 2.5 });
+      }
+
+      // Draw the next triangle to be added (if any) with pulsing effect
+      if (inductionStep < inductionTriangles.length) {
+        const nextTri = inductionTriangles[inductionStep];
+        const color = BASE_CASE_COLORS[inductionStep % BASE_CASE_COLORS.length];
+        ctx.save();
+        ctx.globalAlpha = 0.5 + 0.3 * Math.sin(Date.now() / 250);
+        drawPolygon(nextTri, { fill: color.fill, stroke: color.stroke, lineWidth: 3.5 });
+        ctx.restore();
+
+        // Draw shared edge highlight (for steps after the base case)
+        if (inductionStep > 0) {
+          const sharedEdge = getSharedEdgeForStep(inductionStep);
+          if (sharedEdge) {
+            const startPt = latticeToCanvas(sharedEdge.start);
+            const endPt = latticeToCanvas(sharedEdge.end);
+            ctx.save();
+            ctx.strokeStyle = SHARED_EDGE_COLOR;
+            ctx.lineWidth = 6;
+            ctx.setLineDash([8, 8]);
+            ctx.beginPath();
+            ctx.moveTo(startPt.x, startPt.y);
+            ctx.lineTo(endPt.x, endPt.y);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            ctx.restore();
+          }
+        }
+      }
+
+      // Draw interior and boundary points for accumulated region
+      if (inductionStep > 0 && inductionAccumulatedSnapshots[inductionStep - 1]) {
+        const snap = inductionAccumulatedSnapshots[inductionStep - 1];
+        drawPointsLarge(snap.boundary_points, "#f48c06");
+        drawPointsLarge(snap.interior_points, "#2a9d8f");
+      }
+
+      // Draw all lattice points in the outer triangle region
+      ctx.save();
+      for (let i = 0; i <= n; i++) {
+        for (let j = 0; j <= n - i; j++) {
+          const p = latticeToCanvas({ x: v0.x + i, y: v0.y + j });
+          ctx.beginPath();
+          ctx.fillStyle = "#ffffff";
+          ctx.strokeStyle = "#64748b";
+          ctx.lineWidth = 2;
+          ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+        }
+      }
+      ctx.restore();
+    }
+
+    // Larger point drawing for zoomed induction view
+    function drawPointsLarge(points, color) {
+      ctx.save();
+      ctx.fillStyle = color;
+      for (const point of points || []) {
+        const p = latticeToCanvas({ x: point[0], y: point[1] });
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    }
+
     function drawScene() {
       if (!ctx) return;
       const rect = canvas.getBoundingClientRect();
@@ -860,8 +1465,10 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
         drawPoints(triangleSnapshot.interior_points, "#2a9d8f");
         drawPolygon(triangleVertices);
         drawHandles(triangleVertices);
-      } else {
+      } else if (currentTab === TABS.ADDITIVE) {
         drawAdditiveScene();
+      } else if (currentTab === TABS.INDUCTION) {
+        drawInductionScene();
       }
     }
 
@@ -939,14 +1546,187 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
       });
     }
 
+    function updateInductionSidebar() {
+      const totalSteps = inductionTriangles.length;
+
+      // Update progress bar
+      let progressHTML = "";
+      for (let i = 0; i < totalSteps; i++) {
+        let cls = "progress-dot";
+        if (i < inductionStep) cls += " complete";
+        else if (i === inductionStep) cls += " active";
+        progressHTML += `<div class="${cls}"></div>`;
+      }
+      indProgressBar.innerHTML = progressHTML;
+
+      // Update buttons
+      indPrevBtn.disabled = inductionStep <= 0;
+      indNextBtn.disabled = inductionStep >= totalSteps;
+
+      // Update step title and description
+      if (inductionStep === 0) {
+        indStepTitle.textContent = "Step 0: Ready";
+        indStepDesc.innerHTML = `We decompose the triangle into <strong>${totalSteps} base case triangles</strong> (each with area ½, exactly 3 boundary points, and 0 interior points). Click Next to verify the base case.`;
+      } else if (inductionStep === 1) {
+        indStepTitle.textContent = "Step 1: Base Case";
+        indStepDesc.innerHTML = `<strong>P₁ is a base case triangle</strong>: A = ½, B = 3, I = 0.<br>Check: ½ = 0 + 3/2 − 1 = ½ ✓<br>The conjecture holds for the base case!`;
+      } else if (inductionStep >= totalSteps) {
+        indStepTitle.textContent = `Complete: All ${totalSteps} Triangles`;
+        indStepDesc.innerHTML = `The full triangle is assembled from ${totalSteps} base case triangles. The conjecture <strong>A = I + B/2 − 1</strong> held at every step, completing the inductive proof!`;
+      } else {
+        indStepTitle.textContent = `Step ${inductionStep}: Glue P${inductionStep}`;
+        indStepDesc.innerHTML = `Gluing base case triangle P${inductionStep} to the region. Shared edge points become interior points. The conjecture continues to hold.`;
+      }
+
+      // Update legend (show fewer items for many triangles)
+      let legendHTML = "";
+      const maxLegendItems = 8;
+      const showCount = Math.min(inductionStep + 1, totalSteps, maxLegendItems);
+      for (let i = 0; i < showCount; i++) {
+        const color = BASE_CASE_COLORS[i % BASE_CASE_COLORS.length];
+        const opacity = i < inductionStep ? "1" : "0.6";
+        legendHTML += `<div class="legend-item" style="opacity:${opacity}">
+          <div class="legend-swatch" style="background:${color.fill};border-color:${color.stroke}"></div>
+          <span>P${i + 1}</span>
+        </div>`;
+      }
+      if (inductionStep >= maxLegendItems) {
+        legendHTML += `<div class="legend-item"><span>... +${inductionStep + 1 - maxLegendItems} more</span></div>`;
+      }
+      indLegend.innerHTML = legendHTML;
+
+      // Update stats
+      if (inductionStep === 0) {
+        indArea.textContent = "0";
+        indBoundary.textContent = "0";
+        indInterior.textContent = "0";
+        indPickResult.textContent = "−";
+        indGlueBox.classList.add("hidden");
+        indPickWork.innerHTML = `<div class="pick-line">Each base case triangle has:</div>
+          <div class="pick-line">• Area A = ½</div>
+          <div class="pick-line">• Boundary B = 3 (vertices only)</div>
+          <div class="pick-line">• Interior I = 0</div>
+          <div class="pick-line success">• ½ = 0 + 3/2 − 1 ✓</div>`;
+      } else {
+        const accSnap = inductionAccumulatedSnapshots[inductionStep - 1];
+        if (accSnap) {
+          const area = accSnap.area ?? 0;
+          const boundary = accSnap.boundary ?? 0;
+          const interior = accSnap.interior ?? 0;
+          const pickVal = interior + boundary / 2 - 1;
+
+          indArea.textContent = formatArea(area);
+          indBoundary.textContent = boundary;
+          indInterior.textContent = interior;
+          indPickResult.textContent = formatArea(pickVal);
+
+          // Show glue box info for inductive steps
+          if (inductionStep > 1 && inductionStep <= totalSteps) {
+            indGlueBox.classList.remove("hidden");
+            const triSnap = inductionSnapshots[inductionStep - 1];
+            indNewArea.textContent = formatArea(triSnap?.area ?? 0);
+
+            // Base case triangles have no interior edge points (edges are length 1)
+            indAbsorbed.textContent = "0";
+          } else if (inductionStep === 1) {
+            // Base case - show special info
+            indGlueBox.classList.remove("hidden");
+            indNewArea.textContent = "½";
+            indAbsorbed.textContent = "−";
+          } else {
+            indGlueBox.classList.add("hidden");
+          }
+
+          // Build conjecture verification display
+          let pickHTML = '<div class="pick-line">Conjecture: A = I + B/2 − 1</div>';
+          
+          // Show base case prominently
+          if (inductionStep >= 1) {
+            pickHTML += `<div class="pick-line success"><strong>Base:</strong> P₁: ½ = 0 + 3/2 − 1 ✓</div>`;
+          }
+          
+          // Show accumulated results (limit display for many triangles)
+          const maxDisplay = 6;
+          const startIdx = Math.max(1, inductionStep - maxDisplay + 1);
+          
+          if (startIdx > 1) {
+            pickHTML += `<div class="pick-line">... earlier steps verified ...</div>`;
+          }
+          
+          for (let i = startIdx; i < inductionStep; i++) {
+            const snap = inductionAccumulatedSnapshots[i];
+            if (snap) {
+              const a = snap.area ?? 0;
+              const b = snap.boundary ?? 0;
+              const iVal = snap.interior ?? 0;
+              const rhs = iVal + b / 2 - 1;
+              const matches = Math.abs(a - rhs) < 1e-6;
+              const label = `P₁∪...∪P${i + 1}`;
+              pickHTML += `<div class="pick-line ${matches ? "success" : "alert"}">${label}: ${formatArea(a)} = ${iVal} + ${b}/2 − 1 ${matches ? "✓" : "✗"}</div>`;
+            }
+          }
+          indPickWork.innerHTML = pickHTML;
+        }
+      }
+
+      // Show final check
+      if (inductionStep >= totalSteps) {
+        indFinalCheck.classList.remove("hidden");
+      } else {
+        indFinalCheck.classList.add("hidden");
+      }
+    }
+
+    function gcd(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        [a, b] = [b, a % b];
+      }
+      return a;
+    }
+
     function updateSidebar() {
       const isTriangle = currentTab === TABS.TRIANGLE;
+      const isAdditive = currentTab === TABS.ADDITIVE;
+      const isInduction = currentTab === TABS.INDUCTION;
+
       trianglePanel.classList.toggle("hidden", !isTriangle);
-      additivePanel.classList.toggle("hidden", isTriangle);
+      additivePanel.classList.toggle("hidden", !isAdditive);
+      inductionPanel.classList.toggle("hidden", !isInduction);
+
       if (isTriangle) {
         updateTriangleSidebar();
-      } else {
+      } else if (isAdditive) {
         updateAdditiveSidebar();
+      } else if (isInduction) {
+        updateInductionSidebar();
+      }
+    }
+
+    async function computeInductionSnapshots() {
+      if (!pythonReady) return;
+
+      inductionSnapshots = [];
+      inductionAccumulatedSnapshots = [];
+
+      // Compute snapshot for each individual triangle
+      for (const tri of inductionTriangles) {
+        const pyVerts = pyodide.toPy(tri.map((v) => [v.x, v.y]));
+        const result = computeSnapshot(pyVerts).toJs({ dict_converter: Object.fromEntries });
+        inductionSnapshots.push(result);
+        pyVerts.destroy();
+      }
+
+      // Compute accumulated snapshots
+      for (let i = 0; i < inductionTriangles.length; i++) {
+        const accPoly = getAccumulatedPolygon(i + 1);
+        if (accPoly.length >= 3) {
+          const pyVerts = pyodide.toPy(accPoly.map((v) => [v.x, v.y]));
+          const result = computeSnapshot(pyVerts).toJs({ dict_converter: Object.fromEntries });
+          inductionAccumulatedSnapshots.push(result);
+          pyVerts.destroy();
+        }
       }
     }
 
@@ -963,10 +1743,12 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
           pyVertices = pyodide.toPy(triangleVertices.map((v) => [v.x, v.y]));
           const result = computeSnapshot(pyVertices).toJs({ dict_converter: Object.fromEntries });
           triangleSnapshot = result;
-        } else {
+        } else if (currentTab === TABS.ADDITIVE) {
           pyVertices = pyodide.toPy(additiveVertices.map((v) => [v.x, v.y]));
           const result = computeAdditiveSnapshot(pyVertices).toJs({ dict_converter: Object.fromEntries });
           additiveSnapshot = result;
+        } else if (currentTab === TABS.INDUCTION) {
+          await computeInductionSnapshots();
         }
         updateSidebar();
         drawScene();
@@ -1009,6 +1791,7 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
     }
 
     canvas.addEventListener("pointerdown", (evt) => {
+      if (currentTab === TABS.INDUCTION) return; // No dragging in induction mode
       const pos = pointerPosition(evt);
       const hit = findHandle(pos);
       if (hit !== null) {
@@ -1055,6 +1838,29 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
       });
     });
 
+    // Induction controls
+    indPrevBtn.addEventListener("click", () => {
+      if (inductionStep > 0) {
+        inductionStep--;
+        updateSidebar();
+        drawScene();
+      }
+    });
+
+    indNextBtn.addEventListener("click", () => {
+      if (inductionStep < inductionTriangles.length) {
+        inductionStep++;
+        updateSidebar();
+        drawScene();
+      }
+    });
+
+    indResetBtn.addEventListener("click", () => {
+      inductionStep = 0;
+      updateSidebar();
+      drawScene();
+    });
+
     function releasePointer(evt) {
       if (activeHandle !== null) {
         if (canvas.hasPointerCapture(evt.pointerId)) {
@@ -1068,6 +1874,15 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
     canvas.addEventListener("pointercancel", releasePointer);
     window.addEventListener("resize", () => drawScene());
 
+    // Animation loop for induction tab pulsing effect
+    let animationFrame;
+    function animateInduction() {
+      if (currentTab === TABS.INDUCTION && inductionStep < inductionTriangles.length) {
+        drawScene();
+      }
+      animationFrame = requestAnimationFrame(animateInduction);
+    }
+
     async function bootPython() {
       try {
         pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/" });
@@ -1075,6 +1890,10 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
         computeSnapshot = pyodide.globals.get("compute_snapshot");
         computeAdditiveSnapshot = pyodide.globals.get("compute_additive_snapshot");
         pythonReady = true;
+
+        // Build induction triangles
+        buildInductionTriangles();
+
         updateSidebar();
         runPythonUpdate();
       } catch (error) {
@@ -1082,9 +1901,11 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
       }
     }
 
+    buildInductionTriangles();
     updateSidebar();
     drawScene();
     bootPython();
+    animateInduction();
   </script>
 </body>
 </html>
