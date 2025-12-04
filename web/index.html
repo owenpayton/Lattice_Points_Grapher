@@ -508,7 +508,7 @@
 
           <div class="progress-bar" id="indProgressBar"></div>
 
-          <div class="step-title" id="indStepTitle">Step 0: Ready</div>
+          <div class="step-title" id="indStepTitle">Step 0: Base Case</div>
           <div class="step-description" id="indStepDesc">
             We decompose the triangle into base case triangles (area ½ each). Click Next to start the induction.
           </div>
@@ -1565,7 +1565,7 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
 
       // Update step title and description
       if (inductionStep === 0) {
-        indStepTitle.textContent = "Step 0: Ready";
+        indStepTitle.textContent = "Step 0: Base Case";
         indStepDesc.innerHTML = `We decompose the triangle into <strong>${totalSteps} base case triangles</strong> (each with area ½, exactly 3 boundary points, and 0 interior points). Click Next to verify the base case.`;
       } else if (inductionStep === 1) {
         indStepTitle.textContent = "Step 1: Base Case";
