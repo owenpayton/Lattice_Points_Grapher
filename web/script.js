@@ -58,17 +58,6 @@ const DEFAULT_SCALE = 32;
 const INDUCTION_SCALE = 70; // Larger scale to see base case triangles better
 const SHARED_EDGE_COLOR = "#c026d3";
 
-function renderMath() {
-  if (window.renderMathInElement) {
-    renderMathInElement(document.body, {
-      delimiters: [
-        {left: "$$", right: "$$", display: true},
-        {left: "\\(", right: "\\)", display: false}
-      ]
-    });
-  }
-}
-
 function getScale() {
   return currentTab === TABS.INDUCTION ? INDUCTION_SCALE : DEFAULT_SCALE;
 }
@@ -961,7 +950,7 @@ function updateAdditiveSidebar() {
   const edgeInterior = shared.interior_count ?? 0;
   additiveStatsEls.edgeInterior.textContent = edgeInterior;
   const equationExpression = `${p1Interior} + ${p2Interior} + ${edgeInterior} = ${unionInterior}`;
-  additiveStatsEls.equation.innerHTML = `\\( I(P_1 \\cup P_2) = I(P_1) + I(P_2) + I(\\text{shared}) = ${equationExpression} \\)`;
+  additiveStatsEls.equation.textContent = `I(P1 ∪ P2) = I(P1) + I(P2) + I(shared edge) = ${equationExpression}`;
 
   const pickLine = (label, snapshot) => {
     const area = snapshot.area ?? 0;
@@ -969,19 +958,14 @@ function updateAdditiveSidebar() {
     const interior = snapshot.interior ?? 0;
     const rhs = interior + boundary / 2 - 1;
     const matches = Math.abs(area - rhs) < 1e-6;
-    
-    const texLabel = label.replace(/(\d+)/g, "_{$1}").replace("union", "\\cup");
-    const texArea = formatArea(area);
-    const texRhs = formatArea(rhs);
-    
     return {
-      text: `\\( \\text{${label}}: ${texArea} = ${interior} + \\frac{${boundary}}{2} - 1 = ${texRhs} \\)`,
+      text: `${label}: ${formatArea(area)} = ${interior} + (${boundary} / 2) - 1 = ${formatArea(rhs)}`,
       matches,
     };
   };
 
   const theoremLines = [
-    { text: "\\( A(P) = I(P) + \\frac{B(P)}{2} - 1 \\)", matches: true },
+    { text: "A(P) = I(P) + B(P) / 2 - 1", matches: true },
     pickLine("P1", p1),
     pickLine("P2", p2),
     pickLine("P1 ∪ P2", union),
@@ -1020,16 +1004,24 @@ function updateInductionSidebar() {
   // Update step title and description
   if (inductionStep === 0) {
     indStepTitle.textContent = "Step 0: Base Case";
-    indStepDesc.innerHTML = `We decompose the triangle into <strong>${totalSteps} base case triangles</strong> (each with \( A = \\frac{1}{2}, B=3, I=0 \)).`;
+    indStepDesc.innerHTML = `We decompose the triangle into <strong>${totalSteps} base case triangles</strong> (each with area ½, B=3, I=0).`;
   } else if (inductionStep === 1) {
     indStepTitle.textContent = "Step 1: Base Case";
+<<<<<<< HEAD
     indStepDesc.innerHTML = `<strong>\\( P_1 \\) is a base case triangle</strong>: \\( A = \\frac{1}{2}, B = 3, I = 0 \\).<br>Check: \\( \\frac{1}{2} = 0 + \\frac{3}{2} - 1 = \\frac{1}{2} \\) ✓<br>The conjecture holds for the base case!`;
+=======
+    indStepDesc.innerHTML = `<strong>P₁ is a base case triangle</strong>: A = ½, B = 3, I = 0.<br>Check: ½ = 0 + 3/2 − 1 = ½ ✓<br>The conjecture holds for the base case!`;
+>>>>>>> parent of 32e4904 (feat: Update math notation to use KaTeX for web and HTML formatting for Python app)
   } else if (inductionStep >= totalSteps) {
     indStepTitle.textContent = `Complete: All ${totalSteps} Triangles`;
     indStepDesc.innerHTML = ``;
   } else {
     indStepTitle.textContent = `Step ${inductionStep}: Glue P${inductionStep}`;
+<<<<<<< HEAD
     indStepDesc.innerHTML = `Gluing base case triangle \\( P_{${inductionStep}} \\) to the region. Shared edge points become interior points. The conjecture continues to hold.`;
+=======
+    indStepDesc.innerHTML = `Gluing base case triangle P${inductionStep} to the region. Shared edge points become interior points. The conjecture continues to hold.`;
+>>>>>>> parent of 32e4904 (feat: Update math notation to use KaTeX for web and HTML formatting for Python app)
   }
 
   // Update legend (show fewer items for many triangles)
@@ -1041,11 +1033,11 @@ function updateInductionSidebar() {
     const opacity = i < inductionStep ? "1" : "0.6";
     legendHTML += `<div class="legend-item" style="opacity:${opacity}">
       <div class="legend-swatch" style="background:${color.fill};border-color:${color.stroke}"></div>
-      <span>\\( P_{${i + 1}} \\)</span>
+      <span>P${i + 1}</span>
     </div>`;
   }
   if (inductionStep >= maxLegendItems) {
-    legendHTML += `<div class="legend-item"><span>...+${inductionStep + 1 - maxLegendItems} more</span></div>`;
+    legendHTML += `<div class="legend-item"><span>... +${inductionStep + 1 - maxLegendItems} more</span></div>`;
   }
   indLegend.innerHTML = legendHTML;
 
@@ -1057,10 +1049,17 @@ function updateInductionSidebar() {
     indPickResult.textContent = "−";
     indGlueBox.classList.add("hidden");
     indPickWork.innerHTML = `<div class="pick-line">Each base case triangle has:</div>
+<<<<<<< HEAD
       <div class="pick-line">• Area \\( A = \\frac{1}{2} \\)</div>
       <div class="pick-line">• Boundary \\( B = 3 \\) (vertices only)</div>
       <div class="pick-line">• Interior \\( I = 0 \\)</div>
       <div class="pick-line success">• \\( \\frac{1}{2} = 0 + \\frac{3}{2} - 1 \\) ✓</div>`;
+=======
+      <div class="pick-line">• Area A = ½</div>
+      <div class="pick-line">• Boundary B = 3 (vertices only)</div>
+      <div class="pick-line">• Interior I = 0</div>
+      <div class="pick-line success">• ½ = 0 + 3/2 − 1 ✓</div>`;
+>>>>>>> parent of 32e4904 (feat: Update math notation to use KaTeX for web and HTML formatting for Python app)
   } else {
     const accSnap = inductionAccumulatedSnapshots[inductionStep - 1];
     if (accSnap) {
@@ -1092,11 +1091,19 @@ function updateInductionSidebar() {
       }
 
       // Build conjecture verification display
+<<<<<<< HEAD
       let pickHTML = '<div class="pick-line">Conjecture: \\( A = I + B/2 - 1 \\)</div>';
       
       // Show base case prominently
       if (inductionStep >= 1) {
         pickHTML += `<div class="pick-line success"><strong>Base:</strong> \\( P_1 \\): \\( \\frac{1}{2} = 0 + \\frac{3}{2} - 1 \\) ✓</div>`;
+=======
+      let pickHTML = '<div class="pick-line">Conjecture: A = I + B/2 − 1</div>';
+      
+      // Show base case prominently
+      if (inductionStep >= 1) {
+        pickHTML += `<div class="pick-line success"><strong>Base:</strong> P₁: ½ = 0 + 3/2 − 1 ✓</div>`;
+>>>>>>> parent of 32e4904 (feat: Update math notation to use KaTeX for web and HTML formatting for Python app)
       }
       
       // Show accumulated results (limit display for many triangles)
@@ -1115,9 +1122,8 @@ function updateInductionSidebar() {
           const iVal = snap.interior ?? 0;
           const rhs = iVal + b / 2 - 1;
           const matches = Math.abs(a - rhs) < 1e-6;
-          const label = `P_1 \\cup ... \\cup P_{${i + 1}}`;
-          const texA = formatArea(a);
-          pickHTML += `<div class="pick-line ${matches ? "success" : "alert"}">\\( ${label}: ${texA} = ${iVal} + \\frac{${b}}{2} - 1 \) ${matches ? "✓" : "✗"}</div>`;
+          const label = `P₁∪...∪P${i + 1}`;
+          pickHTML += `<div class="pick-line ${matches ? "success" : "alert"}">${label}: ${formatArea(a)} = ${iVal} + ${b}/2 − 1 ${matches ? "✓" : "✗"}</div>`;
         }
       }
       indPickWork.innerHTML = pickHTML;
@@ -1127,7 +1133,6 @@ function updateInductionSidebar() {
   // Show final check
   if (inductionStep >= totalSteps) {
     indFinalCheck.classList.remove("hidden");
-    indFinalCheck.querySelector('.message').innerHTML = "\\( A = I + B/2 - 1 \\) verified by induction!";
   } else {
     indFinalCheck.classList.add("hidden");
   }
@@ -1158,7 +1163,6 @@ function updateSidebar() {
   } else if (isInduction) {
     updateInductionSidebar();
   }
-  renderMath();
 }
 
 async function computeInductionSnapshots() {
