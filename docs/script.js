@@ -1007,21 +1007,13 @@ function updateInductionSidebar() {
     indStepDesc.innerHTML = `We decompose the triangle into <strong>${totalSteps} base case triangles</strong> (each with area ½, B=3, I=0).`;
   } else if (inductionStep === 1) {
     indStepTitle.textContent = "Step 1: Base Case";
-<<<<<<< HEAD
-    indStepDesc.innerHTML = `<strong>\\( P_1 \\) is a base case triangle</strong>: \\( A = \\frac{1}{2}, B = 3, I = 0 \\).<br>Check: \\( \\frac{1}{2} = 0 + \\frac{3}{2} - 1 = \\frac{1}{2} \\) ✓<br>The conjecture holds for the base case!`;
-=======
     indStepDesc.innerHTML = `<strong>P₁ is a base case triangle</strong>: A = ½, B = 3, I = 0.<br>Check: ½ = 0 + 3/2 − 1 = ½ ✓<br>The conjecture holds for the base case!`;
->>>>>>> parent of 32e4904 (feat: Update math notation to use KaTeX for web and HTML formatting for Python app)
   } else if (inductionStep >= totalSteps) {
     indStepTitle.textContent = `Complete: All ${totalSteps} Triangles`;
     indStepDesc.innerHTML = ``;
   } else {
     indStepTitle.textContent = `Step ${inductionStep}: Glue P${inductionStep}`;
-<<<<<<< HEAD
-    indStepDesc.innerHTML = `Gluing base case triangle \\( P_{${inductionStep}} \\) to the region. Shared edge points become interior points. The conjecture continues to hold.`;
-=======
     indStepDesc.innerHTML = `Gluing base case triangle P${inductionStep} to the region. Shared edge points become interior points. The conjecture continues to hold.`;
->>>>>>> parent of 32e4904 (feat: Update math notation to use KaTeX for web and HTML formatting for Python app)
   }
 
   // Update legend (show fewer items for many triangles)
@@ -1049,17 +1041,10 @@ function updateInductionSidebar() {
     indPickResult.textContent = "−";
     indGlueBox.classList.add("hidden");
     indPickWork.innerHTML = `<div class="pick-line">Each base case triangle has:</div>
-<<<<<<< HEAD
-      <div class="pick-line">• Area \\( A = \\frac{1}{2} \\)</div>
-      <div class="pick-line">• Boundary \\( B = 3 \\) (vertices only)</div>
-      <div class="pick-line">• Interior \\( I = 0 \\)</div>
-      <div class="pick-line success">• \\( \\frac{1}{2} = 0 + \\frac{3}{2} - 1 \\) ✓</div>`;
-=======
       <div class="pick-line">• Area A = ½</div>
       <div class="pick-line">• Boundary B = 3 (vertices only)</div>
       <div class="pick-line">• Interior I = 0</div>
       <div class="pick-line success">• ½ = 0 + 3/2 − 1 ✓</div>`;
->>>>>>> parent of 32e4904 (feat: Update math notation to use KaTeX for web and HTML formatting for Python app)
   } else {
     const accSnap = inductionAccumulatedSnapshots[inductionStep - 1];
     if (accSnap) {
@@ -1091,19 +1076,11 @@ function updateInductionSidebar() {
       }
 
       // Build conjecture verification display
-<<<<<<< HEAD
-      let pickHTML = '<div class="pick-line">Conjecture: \\( A = I + B/2 - 1 \\)</div>';
-      
-      // Show base case prominently
-      if (inductionStep >= 1) {
-        pickHTML += `<div class="pick-line success"><strong>Base:</strong> \\( P_1 \\): \\( \\frac{1}{2} = 0 + \\frac{3}{2} - 1 \\) ✓</div>`;
-=======
       let pickHTML = '<div class="pick-line">Conjecture: A = I + B/2 − 1</div>';
       
       // Show base case prominently
       if (inductionStep >= 1) {
         pickHTML += `<div class="pick-line success"><strong>Base:</strong> P₁: ½ = 0 + 3/2 − 1 ✓</div>`;
->>>>>>> parent of 32e4904 (feat: Update math notation to use KaTeX for web and HTML formatting for Python app)
       }
       
       // Show accumulated results (limit display for many triangles)
