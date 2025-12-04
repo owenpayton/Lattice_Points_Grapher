@@ -1572,7 +1572,7 @@ def compute_additive_snapshot(vertices: Sequence[Point]):
         indStepDesc.innerHTML = `<strong>P₁ is a base case triangle</strong>: A = ½, B = 3, I = 0.<br>Check: ½ = 0 + 3/2 − 1 = ½ ✓<br>The conjecture holds for the base case!`;
       } else if (inductionStep >= totalSteps) {
         indStepTitle.textContent = `Complete: All ${totalSteps} Triangles`;
-        indStepDesc.innerHTML = `The full triangle is assembled from ${totalSteps} base case triangles. The conjecture <strong>A = I + B/2 − 1</strong> held at every step, completing the inductive proof!`;
+        indStepDesc.innerHTML = ``;
       } else {
         indStepTitle.textContent = `Step ${inductionStep}: Glue P${inductionStep}`;
         indStepDesc.innerHTML = `Gluing base case triangle P${inductionStep} to the region. Shared edge points become interior points. The conjecture continues to hold.`;
