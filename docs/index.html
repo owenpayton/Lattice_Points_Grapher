@@ -5,6 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lattice Triangle</title>
   <style>
+    /*
+    Source - https://stackoverflow.com/a
+    Posted by Holger, modified by community. See post 'Timeline' for change history
+    Retrieved 2025-12-04, License - CC BY-SA 4.0
+    */
+
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunss.otf');
+    }
+
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunsx.otf');
+      font-weight: bold;
+    }
+
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunsi.otf');
+      font-style: italic, oblique;
+    }
+
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunbxo.otf');
+      font-weight: bold;
+      font-style: italic, oblique;
+    }
+
     :root {
       --bg: #eef2f7;
       --panel: #ffffff;
@@ -22,7 +52,7 @@
 
     body {
       margin: 0;
-      font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+      font-family: "Computer Modern", sans-serif;
       background: var(--bg);
       color: var(--text);
     }

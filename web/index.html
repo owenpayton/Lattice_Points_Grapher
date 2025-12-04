@@ -5,6 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Lattice Triangle</title>
   <style>
+    /*
+    Source - https://stackoverflow.com/a
+    Posted by Holger, modified by community. See post 'Timeline' for change history
+    Retrieved 2025-12-04, License - CC BY-SA 4.0
+    */
+
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunss.otf');
+    }
+
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunsx.otf');
+      font-weight: bold;
+    }
+
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunsi.otf');
+      font-style: italic, oblique;
+    }
+
+    @font-face {
+      font-family: "Computer Modern";
+      src: url('http://mirrors.ctan.org/fonts/cm-unicode/fonts/otf/cmunbxo.otf');
+      font-weight: bold;
+      font-style: italic, oblique;
+    }
+
     :root {
       --bg: #eef2f7;
       --panel: #ffffff;
@@ -22,7 +52,7 @@
 
     body {
       margin: 0;
-      font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
+      font-family: "Computer Modern", sans-serif;
       background: var(--bg);
       color: var(--text);
     }
@@ -395,7 +425,7 @@
         <div class="tab-bar" role="tablist">
           <button class="tab active" data-tab="triangle" aria-selected="true">Triangle</button>
           <button class="tab" data-tab="additive" aria-selected="false">Shared Edge Test</button>
-          <button class="tab" data-tab="induction" aria-selected="false">Induction Proof</button>
+          <button class="tab" data-tab="induction" aria-selected="false">Induction Proof Sketch</button>
         </div>
         <canvas id="gridCanvas" aria-label="Lattice triangle canvas"></canvas>
       </section>
