@@ -334,7 +334,7 @@ canvas {
 
 .proof-row .value {
   font-weight: 600;
-  font-family: "SF Mono", "Consolas", monospace;
+  font-family: "Computer Modern", "SF Mono", "Consolas", monospace;
 }
 
 .proof-row.highlight {
