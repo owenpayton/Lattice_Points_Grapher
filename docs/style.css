@@ -27,6 +27,20 @@ body {
   color: var(--text);
 }
 
+/* Subtle grain overlay like Arc Browser */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.2;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
 /* Ensure buttons and inputs inherit font */
 button, input, select, textarea {
   font-family: inherit;
@@ -46,7 +60,7 @@ button, input, select, textarea {
 }
 
 .card {
-  background: var(--panel);
+  background: linear-gradient(to bottom, #ffffff 0%, #f8fafc 100%);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px;
@@ -108,7 +122,7 @@ canvas {
   padding: 10px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: #f7fafc;
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f4f8 100%);
 }
 
 .stat small {
@@ -136,7 +150,7 @@ canvas {
   padding: 8px;
   border: 1px solid var(--border);
   border-radius: 6px;
-  background: #f7fafc;
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f4f8 100%);
   font-weight: 600;
   color: var(--muted);
 }
@@ -177,7 +191,7 @@ canvas {
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 12px;
-  background: #fefefe;
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f4f8 100%);
   font-size: 13px;
   line-height: 1.4;
 }
@@ -200,12 +214,11 @@ canvas {
 }
 
 .accent-stat {
-  border-color: var(--edge-accent);
-  background: #fdf4ff;
+  /* No special styling - matches regular stat */
 }
 
 .shared-edge-value {
-  color: var(--edge-accent);
+  /* No special styling */
 }
 
 /* Induction Proof Panel Styles */
@@ -225,13 +238,6 @@ canvas {
   font-weight: 600;
   font-size: 13px;
   cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.step-btn:hover:not(:disabled) {
-  background: linear-gradient(to bottom, #f8fafc 0%, #e8eef4 100%);
-  border-color: var(--accent);
-  color: var(--accent);
 }
 
 .step-btn:disabled {
@@ -243,10 +249,6 @@ canvas {
   background: linear-gradient(to bottom, #1fb8c9 0%, #178a99 100%);
   color: white;
   border-color: var(--accent);
-}
-
-.step-btn.primary:hover:not(:disabled) {
-  background: linear-gradient(to bottom, #1fb8c9 0%, #146d79 100%);
 }
 
 .progress-bar {
@@ -290,7 +292,7 @@ canvas {
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 12px;
-  background: linear-gradient(135deg, #fefefe 0%, #f8fafc 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f4f8 100%);
 }
 
 .proof-box-title {

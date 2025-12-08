@@ -23,12 +23,12 @@ function conjectureLineKatex(label, labelLatex, snapshot) {
   const area = snapshot.area ?? 0;
   const boundary = snapshot.boundary ?? 0;
   const interior = snapshot.interior ?? 0;
-  const rhs = interior + boundary / 2 - 1;
+  const rhs = boundary / 2 + interior - 1;
   const matches = Math.abs(area - rhs) < 1e-6;
   const areaStr = formatArea(area);
   const rhsStr = formatArea(rhs);
   
-  const latex = `${labelLatex}: ${areaStr} = ${interior} + \\frac{${boundary}}{2} - 1 = ${rhsStr}`;
+  const latex = `${labelLatex}: ${areaStr} = \\frac{${boundary}}{2} + ${interior} - 1 = ${rhsStr}`;
   
   return {
     html: mathToHtml(latex),
@@ -98,8 +98,8 @@ function updateInductionSidebar(dom) {
   renderMath(dom.indAreaLabel, "\\text{Area } (A)");
   renderMath(dom.indBoundaryLabel, "\\text{Boundary } (B)");
   renderMath(dom.indInteriorLabel, "\\text{Interior } (I)");
-  renderMath(dom.indConjectureLabel, "I + \\frac{B}{2} - 1");
-  renderMath(dom.indFinalMessage, "A = I + \\frac{B}{2} - 1 \\text{ verified by induction!}");
+  renderMath(dom.indConjectureLabel, "\\frac{B}{2} + I - 1");
+  renderMath(dom.indFinalMessage, "A = \\frac{B}{2} + I - 1 \\text{ verified by induction!}");
 
   let progressHTML = "";
   for (let i = 0; i < totalSteps; i++) {
@@ -115,17 +115,14 @@ function updateInductionSidebar(dom) {
 
   if (state.inductionStep === 0) {
     dom.indStepTitle.textContent = "Step 0: Base Case";
-    dom.indStepDesc.innerHTML = `We decompose the triangle into <strong>${totalSteps} base case triangles</strong> (each with ${mathToHtml("A = \\frac{1}{2}")}, ${mathToHtml("B = 3")}, ${mathToHtml("I = 0")}).`;
   } else if (state.inductionStep === 1) {
     dom.indStepTitle.textContent = "Step 1: Base Case";
-    dom.indStepDesc.innerHTML = `<strong>${mathToHtml("P_1")} is a base case triangle</strong>: ${mathToHtml("A = \\frac{1}{2}")}, ${mathToHtml("B = 3")}, ${mathToHtml("I = 0")}.<br>Check: ${mathToHtml("\\frac{1}{2} = 0 + \\frac{3}{2} - 1 = \\frac{1}{2}")} ✓<br>The conjecture holds for the base case!`;
   } else if (state.inductionStep >= totalSteps) {
     dom.indStepTitle.textContent = `Complete: All ${totalSteps} Triangles`;
-    dom.indStepDesc.innerHTML = ``;
   } else {
     dom.indStepTitle.innerHTML = `Step ${state.inductionStep}: Glue ${mathToHtml(`P_{${state.inductionStep}}`)}`;
-    dom.indStepDesc.innerHTML = `Gluing base case triangle ${mathToHtml(`P_{${state.inductionStep}}`)} to the region. Shared edge points become interior points. The conjecture continues to hold.`;
   }
+  dom.indStepDesc.innerHTML = ``;
 
   let legendHTML = "";
   const maxLegendItems = 8;
@@ -154,14 +151,14 @@ function updateInductionSidebar(dom) {
       <div class="conjecture-line">• ${mathToHtml("A = \\frac{1}{2}")}</div>
       <div class="conjecture-line">• ${mathToHtml("B = 3")} (vertices only)</div>
       <div class="conjecture-line">• ${mathToHtml("I = 0")}</div>
-      <div class="conjecture-line success">• ${mathToHtml("\\frac{1}{2} = 0 + \\frac{3}{2} - 1")} ✓</div>`;
+      <div class="conjecture-line success">• ${mathToHtml("\\frac{1}{2} = \\frac{3}{2} + 0 - 1")} ✓</div>`;
   } else {
     const accSnap = state.inductionAccumulatedSnapshots[state.inductionStep - 1];
     if (accSnap) {
       const area = accSnap.area ?? 0;
       const boundary = accSnap.boundary ?? 0;
       const interior = accSnap.interior ?? 0;
-      const conjectureVal = interior + boundary / 2 - 1;
+      const conjectureVal = boundary / 2 + interior - 1;
 
       dom.indArea.textContent = formatArea(area);
       dom.indBoundary.textContent = boundary;
@@ -184,7 +181,7 @@ function updateInductionSidebar(dom) {
       let conjectureHTML = `<div class="conjecture-line">Conjecture: ${mathToHtml(MATH.conjecture)}</div>`;
 
       if (state.inductionStep >= 1) {
-        conjectureHTML += `<div class="conjecture-line success"><strong>Base:</strong> ${mathToHtml("P_1")}: ${mathToHtml("\\frac{1}{2} = 0 + \\frac{3}{2} - 1")} ✓</div>`;
+        conjectureHTML += `<div class="conjecture-line success"><strong>Base:</strong> ${mathToHtml("P_1")}: ${mathToHtml("\\frac{1}{2} = \\frac{3}{2} + 0 - 1")} ✓</div>`;
       }
 
       const maxDisplay = 6;
@@ -200,12 +197,12 @@ function updateInductionSidebar(dom) {
           const a = snap.area ?? 0;
           const b = snap.boundary ?? 0;
           const iVal = snap.interior ?? 0;
-          const rhs = iVal + b / 2 - 1;
+          const rhs = b / 2 + iVal - 1;
           const matches = Math.abs(a - rhs) < 1e-6;
           const labelLatex = `P_1 \\cup \\cdots \\cup P_{${i + 1}}`;
           const aStr = formatArea(a);
           const rhsStr = formatArea(rhs);
-          const eqLatex = `${labelLatex}: ${aStr} = ${iVal} + \\frac{${b}}{2} - 1 = ${rhsStr}`;
+          const eqLatex = `${labelLatex}: ${aStr} = \\frac{${b}}{2} + ${iVal} - 1 = ${rhsStr}`;
           conjectureHTML += `<div class="conjecture-line ${matches ? "success" : "alert"}">${mathToHtml(eqLatex)} ${matches ? "✓" : "✗"}</div>`;
         }
       }

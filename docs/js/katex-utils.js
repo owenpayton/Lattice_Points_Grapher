@@ -91,9 +91,9 @@ export async function processPendingMath() {
 
 // Common math expressions used in the app
 export const MATH = {
-  // The conjecture: A = I + B/2 - 1
-  conjecture: "A = I + \\frac{B}{2} - 1",
-  conjectureFull: "A(P) = I(P) + \\frac{B(P)}{2} - 1",
+  // The conjecture: A = B/2 + I - 1
+  conjecture: "A = \\frac{B}{2} + I - 1",
+  conjectureFull: "A(P) = \\frac{B(P)}{2} + I(P) - 1",
   
   // Polygon labels
   P1: "P_1",
@@ -119,10 +119,10 @@ export const MATH = {
   
   // Build conjecture equation with values
   conjectureEq: (area, interior, boundary) => {
-    const rhs = interior + boundary / 2 - 1;
+    const rhs = boundary / 2 + interior - 1;
     const rhsStr = Number.isInteger(rhs) ? rhs : rhs.toFixed(2);
     const areaStr = Number.isInteger(area) ? area : area.toFixed(2);
-    return `${areaStr} = ${interior} + \\frac{${boundary}}{2} - 1 = ${rhsStr}`;
+    return `${areaStr} = \\frac{${boundary}}{2} + ${interior} - 1 = ${rhsStr}`;
   },
   
   // Interior equation for union
