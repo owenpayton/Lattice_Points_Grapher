@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lattice Triangle</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="layout">
+      <section class="card">
+        <div class="tab-bar" role="tablist">
+          <button class="tab active" data-tab="triangle" aria-selected="true">Triangle</button>
+          <button class="tab" data-tab="additive" aria-selected="false">Shared Edge</button>
+          <button class="tab" data-tab="induction" aria-selected="false">Induction Proof</button>
+        </div>
+        <canvas id="gridCanvas" aria-label="Lattice triangle canvas"></canvas>
+      </section>
+
+      <aside class="card">
+        <div id="trianglePanel">
+          <div class="stats">
+            <div class="stat">
+              <small>Area</small>
+              <strong id="areaValue">0</strong>
+            </div>
+            <div class="stat">
+              <small>Boundary points</small>
+              <strong id="boundaryValue">0</strong>
+            </div>
+            <div class="stat">
+              <small>Interior points</small>
+              <strong id="interiorValue">0</strong>
+            </div>
+          </div>
+
+          <div class="vertices">
+            <div class="vertex"><span>A</span><span id="vertexA">(0, 0)</span></div>
+            <div class="vertex"><span>B</span><span id="vertexB">(0, 0)</span></div>
+            <div class="vertex"><span>C</span><span id="vertexC">(0, 0)</span></div>
+          </div>
+        </div>
+
+        <div id="additivePanel" class="hidden">
+          <div class="cluster">
+            <div class="cluster-label" id="addP1Label"></div>
+            <div class="stats mini-grid">
+              <div class="stat">
+                <small>Area</small>
+                <strong id="addP1Area">0</strong>
+              </div>
+              <div class="stat">
+                <small>Boundary</small>
+                <strong id="addP1Boundary">0</strong>
+              </div>
+              <div class="stat">
+                <small>Interior</small>
+                <strong id="addP1Interior">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="cluster">
+            <div class="cluster-label" id="addP2Label"></div>
+            <div class="stats mini-grid">
+              <div class="stat">
+                <small>Area</small>
+                <strong id="addP2Area">0</strong>
+              </div>
+              <div class="stat">
+                <small>Boundary</small>
+                <strong id="addP2Boundary">0</strong>
+              </div>
+              <div class="stat">
+                <small>Interior</small>
+                <strong id="addP2Interior">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="cluster">
+            <div class="cluster-label" id="addUnionLabel"></div>
+            <div class="stats mini-grid">
+              <div class="stat">
+                <small>Area</small>
+                <strong id="addUnionArea">0</strong>
+              </div>
+              <div class="stat">
+                <small>Boundary</small>
+                <strong id="addUnionBoundary">0</strong>
+              </div>
+              <div class="stat">
+                <small>Interior</small>
+                <strong id="addUnionInterior">0</strong>
+              </div>
+              <div class="stat accent-stat">
+                <small>Shared edge interior</small>
+                <strong id="addEdgeInterior" class="shared-edge-value">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="equation" id="addInteriorEquation"></div>
+          <div class="conjecture-work" id="addConjectureWork"></div>
+
+          <div class="vertices">
+            <div class="vertex"><span>A</span><span id="addVertexA">(0, 0)</span></div>
+            <div class="vertex"><span>B</span><span id="addVertexB">(0, 0)</span></div>
+            <div class="vertex"><span>C</span><span id="addVertexC">(0, 0)</span></div>
+            <div class="vertex"><span>D</span><span id="addVertexD">(0, 0)</span></div>
+          </div>
+        </div>
+
+        <div id="inductionPanel" class="hidden">
+          <div class="step-controls">
+            <button class="step-btn" id="indPrevBtn">← Prev</button>
+            <button class="step-btn" id="indResetBtn">Reset</button>
+            <button class="step-btn primary" id="indNextBtn">Next →</button>
+          </div>
+
+          <div class="progress-bar" id="indProgressBar"></div>
+
+          <div class="step-title" id="indStepTitle">Step 0: Base Case</div>
+          <div class="step-description" id="indStepDesc"></div>
+
+          <div class="triangle-legend" id="indLegend"></div>
+
+          <div class="proof-box">
+            <div class="proof-box-title">Current Accumulated Region</div>
+            <div class="proof-row">
+              <span class="label" id="indAreaLabel"></span>
+              <span class="value" id="indArea">0</span>
+            </div>
+            <div class="proof-row">
+              <span class="label" id="indBoundaryLabel"></span>
+              <span class="value" id="indBoundary">0</span>
+            </div>
+            <div class="proof-row">
+              <span class="label" id="indInteriorLabel"></span>
+              <span class="value" id="indInterior">0</span>
+            </div>
+            <div class="proof-row highlight">
+              <span class="label" id="indConjectureLabel"></span>
+              <span class="value" id="indConjectureResult">0</span>
+            </div>
+          </div>
+
+          <div class="proof-box" id="indGlueBox">
+            <div class="proof-box-title">Gluing This Step</div>
+            <div class="proof-row">
+              <span class="label">New triangle area</span>
+              <span class="value" id="indNewArea"></span>
+            </div>
+            <div class="proof-row absorbed">
+              <span class="label">Edge pts → interior</span>
+              <span class="value" id="indAbsorbed">0</span>
+            </div>
+          </div>
+
+          <div class="conjecture-work" id="indConjectureWork"></div>
+
+          <div class="final-check hidden" id="indFinalCheck">
+            <div class="checkmark">✓</div>
+            <div class="message" id="indFinalMessage"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
